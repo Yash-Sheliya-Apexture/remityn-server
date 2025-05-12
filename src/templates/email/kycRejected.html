@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KYC Action Required - {{appName}}</title>
+    <style>
+        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; margin: 0; padding: 0; background-color: #f0f2f5; color: #333333; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        .email-container { max-width: 600px; margin: 20px auto; background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top: 4px solid #dc3545; /* Red for rejection/error */ }
+        .header { text-align: center; padding-bottom: 20px; }
+        .header h1 { margin: 0; color: #dc3545; font-size: 26px; font-weight: 600; }
+        .content { padding: 15px 0; line-height: 1.7; font-size: 16px; }
+        .content p { margin: 15px 0; }
+        .rejection-reason { background-color: #f8d7da; border-left: 4px solid #f5c6cb; padding: 10px 15px; margin: 20px 0; font-size: 15px; color: #721c24; }
+        .button-container { text-align: center; margin: 30px 0; }
+        .button { background-color: #007bff; color: #ffffff !important; padding: 14px 28px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: 500; font-size: 16px; }
+        .footer { text-align: center; margin-top: 25px; padding-top: 20px; border-top: 1px solid #e9ecef; font-size: 13px; color: #6c757d; }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <h1>KYC Information Required</h1>
+        </div>
+        <div class="content">
+            <p>Hi {{userName}},</p>
+            <p>We've reviewed your Know Your Customer (KYC) submission for your <strong>{{appName}}</strong> account, and unfortunately, it has been <strong>rejected</strong>.</p>
+            {{#if rejectionReason}}
+            <div class="rejection-reason">
+                <p><strong>Reason for rejection:</strong></p>
+                <p>{{rejectionReason}}</p>
+            </div>
+            {{/if}}
+            <p>Please review the reason(s) provided and re-submit your KYC information with the necessary corrections. You can update your details through your account dashboard.</p>
+            <p>If you have any questions or need assistance, please don't hesitate to contact our support team.</p>
+        </div>
+        {{#if kycUpdateLink}}
+        <div class="button-container">
+            <a href="{{kycUpdateLink}}" class="button">Update Your KYC Information</a>
+        </div>
+        {{/if}}
+        <div class="footer">
+            <p>We appreciate your cooperation.</p>
+            <p>© {{currentYear}} {{appName}}. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

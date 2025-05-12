@@ -1,0 +1,53 @@
+# Node.js dependencies
+node_modules/
+
+# Environment variables
+.env
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-error.log*
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE specific files
+.vscode/
+.idea/
+
+# Build and production files
+server/build/
+client/build/
+dist/
+tmp/
+temp/
+
+# Coverage reports from testing
+coverage/
+
+# Output of 'npm pack'
+*.tgz
+
+# Optional npm cache directory
+.npm/
+
+# Ignore compiled JavaScript files
+*.js.map
+
+# Ignore other system files
+*.swp
+*.swo
+
+# Ignore bundled files
+*.bundle.js
+*.min.js
+*.gz
+
+# Ignore other cache or temp files
+.cache/
+.pnp/
+.pnp.js
+.parcel-cache/
