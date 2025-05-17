@@ -1,41 +1,446 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>KYC Approved - {{appName}}</title>
     <style>
-        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; margin: 0; padding: 0; background-color: #f0f2f5; color: #333333; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-        .email-container { max-width: 600px; margin: 20px auto; background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top: 4px solid #28a745; /* Green for success */ }
-        .header { text-align: center; padding-bottom: 20px; }
-        .header h1 { margin: 0; color: #28a745; font-size: 26px; font-weight: 600; }
-        .content { padding: 15px 0; line-height: 1.7; font-size: 16px; }
-        .content p { margin: 15px 0; }
-        .button-container { text-align: center; margin: 30px 0; }
-        .button { background-color: #007bff; color: #ffffff !important; padding: 14px 28px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: 500; font-size: 16px; }
-        .footer { text-align: center; margin-top: 25px; padding-top: 20px; border-top: 1px solid #e9ecef; font-size: 13px; color: #6c757d; }
+      body {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f0f2f5;
+        color: #333333;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      .email-container {
+        max-width: 600px;
+        margin: 20px auto;
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        border-top: 4px solid #28a745; /* Green for success */
+      }
+      .header {
+        text-align: center;
+        padding-bottom: 20px;
+      }
+      .header h1 {
+        margin: 0;
+        color: #28a745;
+        font-size: 26px;
+        font-weight: 600;
+      }
+      .content {
+        padding: 15px 0;
+        line-height: 1.7;
+        font-size: 16px;
+      }
+      .content p {
+        margin: 15px 0;
+      }
+      .button-container {
+        text-align: center;
+        margin: 30px 0;
+      }
+      .button {
+        background-color: #007bff;
+        color: #ffffff !important;
+        padding: 14px 28px;
+        text-decoration: none;
+        border-radius: 5px;
+        display: inline-block;
+        font-weight: 500;
+        font-size: 16px;
+      }
+      .footer {
+        text-align: center;
+        margin-top: 25px;
+        padding-top: 20px;
+        border-top: 1px solid #e9ecef;
+        font-size: 13px;
+        color: #6c757d;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="email-container">
-        <div class="header">
-            <h1>KYC Approved!</h1>
-        </div>
-        <div class="content">
-            <p>Hi {{userName}},</p>
-            <p>Great news! Your Know Your Customer (KYC) verification for your <strong>{{appName}}</strong> account has been successfully <strong>approved</strong>.</p>
-            <p>You now have full access to all features and services. You can start making transfers and managing your finances without any restrictions related to KYC.</p>
-            <p>If you have any questions, feel free to contact our support team.</p>
-        </div>
-        {{#if dashboardLink}}
-        <div class="button-container">
-            <a href="{{dashboardLink}}" class="button">Go to Dashboard</a>
-        </div>
-        {{/if}}
-        <div class="footer">
-            <p>Thank you for choosing {{appName}}!</p>
-            <p>© {{currentYear}} {{appName}}. All rights reserved.</p>
-        </div>
+      <div class="header">
+        <h1>KYC Approved!</h1>
+      </div>
+      <div class="content">
+        <p>Hi {{userName}},</p>
+        <p>
+          Great news! Your Know Your Customer (KYC) verification for your
+          <strong>{{appName}}</strong> account has been successfully
+          <strong>approved</strong>.
+        </p>
+        <p>
+          You now have full access to all features and services. You can start
+          making transfers and managing your finances without any restrictions
+          related to KYC.
+        </p>
+        <p>If you have any questions, feel free to contact our support team.</p>
+      </div>
+      {{#if dashboardLink}}
+      <div class="button-container">
+        <a href="{{dashboardLink}}" class="button">Go to Dashboard</a>
+      </div>
+      {{/if}}
+      <div class="footer">
+        <p>Thank you for choosing {{appName}}!</p>
+        <p>© {{currentYear}} {{appName}}. All rights reserved.</p>
+      </div>
     </div>
-</body>
+  </body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KYC Approved - {{appName}}</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+    <style>
+      :root {
+        --primary: #adfa1d;
+        --primary-hover: #8de900;
+        --text-main: #171717;
+        --text-secondary: #002330;
+        --background: #fff;
+        --card-bg: #f4f4f4;
+        --border: #e3e3e3;
+        --text-gray: #6a7282;
+        --success-green: #28a745; /* Added for specific success accents if needed */
+      }
+
+      /* --- Basic Reset & Global Styles --- */
+      body,
+      table,
+      td,
+      div,
+      p,
+      a,
+      li,
+      h1,
+      h2,
+      h3,
+      h4,
+      span {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font-size: 100%;
+        vertical-align: baseline;
+        box-sizing: border-box;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+        line-height: 1.6;
+      }
+
+      body {
+        width: 100% !important;
+        -webkit-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+        background-color: var(--card-bg); /* Page background */
+        color: var(--text-main);
+        padding: 0;
+      }
+
+      /* --- Main Wrapper Table --- */
+      .email-wrapper {
+        width: 100%;
+        background-color: var(--card-bg); /* Page background */
+        padding: 20px 0;
+      }
+
+      .email-container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: var(--background); /* Main content area background */
+        border-radius: 20px;
+        overflow: hidden;
+      }
+
+      /* --- Header --- */
+      .email-header {
+        background-color: var(
+          --text-secondary
+        ); /* Dark background for header */
+        padding: 40px 30px;
+        text-align: center;
+        color: var(--background); /* White text on dark background */
+      }
+
+      .email-header img.app-logo {
+        max-width: 130px;
+        margin-bottom: 15px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .email-header h1 {
+        font-size: 26px;
+        font-weight: 700;
+        margin-top: 10px;
+        letter-spacing: -0.5px;
+        color: var(--background); /* White heading */
+      }
+
+      /* .email-header h1.success-title {
+        color: var(--primary);
+      }
+      */
+
+      /* --- Email Body / Content --- */
+      .email-body {
+        padding: 35px 30px 25px 30px;
+      }
+
+      .email-body p {
+        font-size: 16px;
+        margin-bottom: 20px;
+        color: var(--text-gray);
+        line-height: 1.7;
+      }
+      .email-body strong {
+        font-weight: 500;
+        color: var(--text-main);
+      }
+      .email-body .success-message strong {
+        color: var(--success-green); /* Using a green for "approved" */
+        font-weight: 600;
+      }
+
+      /* --- CTA Button --- */
+      .cta-button-container {
+        text-align: center;
+        margin: 25px 0 35px 0; /* Adjusted margin */
+      }
+
+      .cta-button {
+        display: inline-block;
+        background-color: var(--primary);
+        color: var(--text-main) !important; /* Dark text on light primary bg */
+        font-weight: 500;
+        padding: 14px 32px;
+        text-decoration: none;
+        border-radius: 30px;
+        font-size: 16px;
+        transition: background-color 0.2s ease, filter 0.2s ease;
+      }
+
+      .cta-button:hover {
+        background-color: var(--primary-hover);
+      }
+
+      /* --- Footer --- */
+      .email-footer {
+        background-color: var(--text-secondary); /* Dark footer background */
+        color: var(
+          --card-bg
+        ); /* Light text color for footer (using card-bg as light gray) */
+        padding: 30px 40px;
+        text-align: center;
+        font-size: 14px;
+      }
+
+      .social-icons {
+        font-size: 20px;
+        margin-bottom: 35px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .social-icons .box {
+        padding: 10px;
+        background-color: #8de900;
+        border-radius: 10px;
+      }
+
+      .social-icons .fa-twitter,
+      .social-icons .fa-linkedin,
+      .social-icons .fa-instagram {
+        color: var(--text-main);
+      }
+
+      .email-footer p {
+        margin-bottom: 10px;
+        line-height: 1.6;
+      }
+
+      .email-footer a {
+        color: var(--primary); /* Primary color for links in footer */
+        text-decoration: none;
+        font-weight: 400;
+      }
+
+      .email-footer a:hover {
+        text-decoration: underline;
+      }
+
+      .footer-links span {
+        color: var(--text-gray); /* Keeping a neutral separator color */
+        margin: 0 10px;
+      }
+
+      .copyright,
+      .footer-thankyou-text {
+        font-size: 14px;
+        color: white;
+        margin-top: 10px;
+      }
+      .footer-thankyou-text {
+        margin-top: 5px;
+      }
+
+      /* --- Responsive Adjustments --- */
+      @media screen and (max-width: 640px) {
+        .email-wrapper {
+          padding: 10px 0;
+        }
+        .email-container {
+          width: 95% !important;
+          border-radius: 10px;
+        }
+        .email-header {
+          padding: 30px 20px;
+        }
+        .email-header h1 {
+          font-size: 22px;
+        }
+
+        .email-body {
+          padding: 25px 20px 20px 20px;
+        }
+
+        .email-body p {
+          font-size: 15px;
+        }
+
+        .cta-button {
+          padding: 12px 28px;
+          font-size: 15px;
+        }
+
+        .email-footer {
+          padding: 25px 20px;
+        }
+
+        .email-footer p {
+          font-size: 13px;
+        }
+        .social-icons {
+          font-size: 18px;
+        }
+        .social-icons a {
+          margin: 0 8px;
+        }
+        .footer-thankyou-text {
+          font-size: 13px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <table
+      role="presentation"
+      class="email-wrapper"
+      width="100%"
+      cellspacing="0"
+      cellpadding="0"
+      border="0"
+    >
+      <tr>
+        <td align="center">
+          <div class="email-container">
+            <!-- Header-Section -->
+            <div class="email-header">
+              <img
+                src="https://wise-lime.vercel.app/assets/images/wise-logo.svg"
+              />
+
+              <!-- You can add class="success-title" if you define specific styling for it -->             
+              <h1>KYC Approved!</h1>
+            </div>
+
+            <!-- Email Body Content -->
+            <div class="email-body">
+              <p>Hi {{userName}},</p>
+              <p class="success-message">
+                Great news! Your Know Your Customer (KYC) verification for your
+                <strong>{{appName}}</strong> account has been successfully
+                <strong>approved</strong>.
+              </p>
+              <p>
+                You now have full access to all features and services. You can
+                start making transfers and managing your finances without any
+                restrictions related to KYC.
+              </p>
+
+              {{#if dashboardLink}}
+              <div class="cta-button-container">
+                <a href="{{dashboardLink}}" class="cta-button"
+                  >Go to Dashboard</a
+                >
+              </div>
+              {{/if}}
+
+              <p>
+                If you have any questions, feel free to contact our support
+                team.
+              </p>
+            </div>
+
+            <!-- Footer-Section -->
+            <div class="email-footer">
+              <div class="social-icons">
+                <a href="#" title="Twitter">
+                  <span class="box"> <i class="fa-brands fa-twitter"></i></span>
+                </a>
+                <a href="#" title="LinkedIn">
+                  <span class="box"><i class="fa-brands fa-linkedin"></i></span>
+                </a>
+                <a href="#" title="Instagram">
+                  <span class="box"
+                    ><i class="fa-brands fa-instagram"></i
+                  ></span>
+                </a>
+              </div>
+              <p>
+                Need help? Contact our support team at
+                <a href="mailto:support@{{appName}}.com"
+                  >support@{{appName}}.com</a
+                >
+              </p>
+              <div class="footer-links">
+                <a href="#">Privacy Policy</a><span>|</span>
+                <a href="#">Terms of Service</a><span>|</span>
+                <a href="#">Help Center</a>
+              </div>
+              <p class="footer-thankyou-text">
+                Thank you for choosing {{appName}}!
+              </p>
+              <p class="copyright">
+                © {{currentYear}} {{appName}}. All rights reserved.
+              </p>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </body>
 </html>

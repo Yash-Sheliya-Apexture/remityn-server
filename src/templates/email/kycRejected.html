@@ -1,48 +1,511 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>KYC Action Required - {{appName}}</title>
     <style>
-        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; margin: 0; padding: 0; background-color: #f0f2f5; color: #333333; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-        .email-container { max-width: 600px; margin: 20px auto; background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top: 4px solid #dc3545; /* Red for rejection/error */ }
-        .header { text-align: center; padding-bottom: 20px; }
-        .header h1 { margin: 0; color: #dc3545; font-size: 26px; font-weight: 600; }
-        .content { padding: 15px 0; line-height: 1.7; font-size: 16px; }
-        .content p { margin: 15px 0; }
-        .rejection-reason { background-color: #f8d7da; border-left: 4px solid #f5c6cb; padding: 10px 15px; margin: 20px 0; font-size: 15px; color: #721c24; }
-        .button-container { text-align: center; margin: 30px 0; }
-        .button { background-color: #007bff; color: #ffffff !important; padding: 14px 28px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: 500; font-size: 16px; }
-        .footer { text-align: center; margin-top: 25px; padding-top: 20px; border-top: 1px solid #e9ecef; font-size: 13px; color: #6c757d; }
+
+      body {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f0f2f5;
+        color: #333333;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      .email-container {
+        max-width: 600px;
+        margin: 20px auto;
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        border-top: 4px solid #dc3545; /* Red for rejection/error */
+      }
+      .header {
+        text-align: center;
+        padding-bottom: 20px;
+      }
+      .header h1 {
+        margin: 0;
+        color: #dc3545;
+        font-size: 26px;
+        font-weight: 600;
+      }
+      .content {
+        padding: 15px 0;
+        line-height: 1.7;
+        font-size: 16px;
+      }
+      .content p {
+        margin: 15px 0;
+      }
+      .rejection-reason {
+        background-color: #f8d7da;
+        border-left: 4px solid #f5c6cb;
+        padding: 10px 15px;
+        margin: 20px 0;
+        font-size: 15px;
+        color: #721c24;
+      }
+      .button-container {
+        text-align: center;
+        margin: 30px 0;
+      }
+      .button {
+        background-color: #007bff;
+        color: #ffffff !important;
+        padding: 14px 28px;
+        text-decoration: none;
+        border-radius: 5px;
+        display: inline-block;
+        font-weight: 500;
+        font-size: 16px;
+      }
+      .footer {
+        text-align: center;
+        margin-top: 25px;
+        padding-top: 20px;
+        border-top: 1px solid #e9ecef;
+        font-size: 13px;
+        color: #6c757d;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="email-container">
-        <div class="header">
-            <h1>KYC Information Required</h1>
-        </div>
-        <div class="content">
-            <p>Hi {{userName}},</p>
-            <p>We've reviewed your Know Your Customer (KYC) submission for your <strong>{{appName}}</strong> account, and unfortunately, it has been <strong>rejected</strong>.</p>
-            {{#if rejectionReason}}
-            <div class="rejection-reason">
-                <p><strong>Reason for rejection:</strong></p>
-                <p>{{rejectionReason}}</p>
-            </div>
-            {{/if}}
-            <p>Please review the reason(s) provided and re-submit your KYC information with the necessary corrections. You can update your details through your account dashboard.</p>
-            <p>If you have any questions or need assistance, please don't hesitate to contact our support team.</p>
-        </div>
-        {{#if kycUpdateLink}}
-        <div class="button-container">
-            <a href="{{kycUpdateLink}}" class="button">Update Your KYC Information</a>
+      <div class="header">
+        <h1>KYC Information Required</h1>
+      </div>
+      <div class="content">
+        <p>Hi {{userName}},</p>
+        <p>
+          We've reviewed your Know Your Customer (KYC) submission for your
+          <strong>{{appName}}</strong> account, and unfortunately, it has been
+          <strong>rejected</strong>.
+        </p>
+        {{#if rejectionReason}}
+        <div class="rejection-reason">
+          <p><strong>Reason for rejection:</strong></p>
+          <p>{{rejectionReason}}</p>
         </div>
         {{/if}}
-        <div class="footer">
-            <p>We appreciate your cooperation.</p>
-            <p>© {{currentYear}} {{appName}}. All rights reserved.</p>
-        </div>
+        <p>
+          Please review the reason(s) provided and re-submit your KYC
+          information with the necessary corrections. You can update your
+          details through your account dashboard.
+        </p>
+        <p>
+          If you have any questions or need assistance, please don't hesitate to
+          contact our support team.
+        </p>
+      </div>
+      {{#if kycUpdateLink}}
+      <div class="button-container">
+        <a href="{{kycUpdateLink}}" class="button"
+          >Update Your KYC Information</a
+        >
+      </div>
+      {{/if}}
+      <div class="footer">
+        <p>We appreciate your cooperation.</p>
+        <p>© {{currentYear}} {{appName}}. All rights reserved.</p>
+      </div>
     </div>
-</body>
+  </body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KYC Action Required - {{appName}}</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+    <style>
+      :root {
+        --primary: #adfa1d;
+        --primary-hover: #8de900;
+        --text-main: #171717;
+        --text-secondary: #002330;
+        --background: #fff;
+        --card-bg: #f4f4f4;
+        --border: #e3e3e3;
+        --text-gray: #6a7282;
+        --error-red: #dc3545; /* For strong error indications */
+        --error-bg-light: #f8d7da; /* Lighter background for error messages */
+        --error-border-light: #f5c6cb; /* Lighter border for error messages */
+        --error-text-dark: #721c24; /* Darker text for readability on light error bg */
+      }
+
+      /* --- Basic Reset & Global Styles --- */
+      body,
+      table,
+      td,
+      div,
+      p,
+      a,
+      li,
+      h1,
+      h2,
+      h3,
+      h4,
+      span {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font-size: 100%;
+        vertical-align: baseline;
+        box-sizing: border-box;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+        line-height: 1.6;
+      }
+
+      body {
+        width: 100% !important;
+        -webkit-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+        background-color: var(--card-bg); /* Page background */
+        color: var(--text-main);
+        padding: 0;
+      }
+
+      /* --- Main Wrapper Table --- */
+      .email-wrapper {
+        width: 100%;
+        background-color: var(--card-bg); /* Page background */
+        padding: 20px 0;
+      }
+
+      .email-container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: var(--background); /* Main content area background */
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+      }
+
+      /* --- Header --- */
+      .email-header {
+        background-color: var(
+          --text-secondary
+        ); /* Dark background for header */
+        padding: 40px 30px;
+        text-align: center;
+        color: var(--background); /* White text on dark background */
+      }
+
+      .email-header img.app-logo {
+        max-width: 130px;
+        margin-bottom: 15px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .email-header h1 {
+        font-size: 26px;
+        font-weight: 700;
+        margin-top: 10px;
+        letter-spacing: -0.5px;
+        color: var(--background); /* White heading */
+      }
+      /* Optional: if you want a specific color for the rejection title
+      .email-header h1.rejection-title {
+        color: var(--error-red);
+      }
+      */
+
+      /* --- Email Body / Content --- */
+      .email-body {
+        padding: 35px 30px 25px 30px;
+      }
+
+      .email-body p {
+        font-size: 16px;
+        margin-bottom: 20px;
+        color: var(--text-gray);
+        line-height: 1.7;
+      }
+      .email-body strong {
+        font-weight: 500;
+        color: var(--text-main);
+      }
+      .email-body .rejection-message strong {
+        color: var(--error-red); /* Using error red for "rejected" */
+        font-weight: 600;
+      }
+
+      /* --- Rejection Reason Block --- */
+      .rejection-reason-block {
+        background-color: var(--error-bg-light);
+        border-left: 4px solid var(--error-red); /* Stronger border color */
+        padding: 15px 20px;
+        margin: 25px 0;
+        font-size: 15px;
+        color: var(--error-text-dark);
+        border-radius: 6px;
+      }
+      .rejection-reason-block p {
+        margin-bottom: 8px;
+        color: var(
+          --error-text-dark
+        ); /* Ensure text color inside block is consistent */
+      }
+      .rejection-reason-block p:last-child {
+        margin-bottom: 0;
+      }
+      .rejection-reason-block strong {
+        color: var(
+          --error-text-dark
+        ); /* Ensure strong text also uses the dark error text color */
+        font-weight: 600;
+      }
+
+      /* --- CTA Button --- */
+      .cta-button-container {
+        text-align: center;
+        margin: 25px 0 35px 0;
+      }
+
+      .cta-button {
+        display: inline-block;
+        background-color: var(--primary);
+        color: var(--text-main) !important; /* Dark text on light primary bg */
+        font-weight: 500;
+        padding: 14px 32px;
+        text-decoration: none;
+        border-radius: 30px;
+        font-size: 16px;
+        transition: background-color 0.2s ease, filter 0.2s ease;
+      }
+
+      .cta-button:hover {
+        background-color: var(--primary-hover);
+      }
+      /* .cta-button.update-button:hover {
+           background-color: #c82333;
+      } */
+
+
+      /* --- Footer --- */
+      .email-footer {
+        background-color: var(--text-secondary); /* Dark footer background */
+        color: var(
+          --card-bg
+        ); /* Light text color for footer (using card-bg as light gray) */
+        padding: 30px 40px;
+        text-align: center;
+        font-size: 14px;
+      }
+
+      .social-icons {
+        font-size: 20px;
+        margin-bottom: 35px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .social-icons .box {
+        padding: 10px;
+        background-color: #8de900;
+        border-radius: 10px;
+      }
+
+      .social-icons .fa-twitter,
+      .social-icons .fa-linkedin,
+      .social-icons .fa-instagram {
+        color: var(--text-main);
+      }
+
+      .email-footer p {
+        margin-bottom: 10px;
+        line-height: 1.6;
+      }
+
+      .email-footer a {
+        color: var(--primary); /* Primary color for links in footer */
+        text-decoration: none;
+        font-weight: 400;
+      }
+
+      .email-footer a:hover {
+        text-decoration: underline;
+      }
+
+      .footer-links span {
+        color: var(--text-gray); /* Keeping a neutral separator color */
+        margin: 0 10px;
+      }
+
+      .copyright,
+      .footer-cooperation-text {
+        font-size: 12px;
+        color: #95a0a6;
+        margin-top: 15px;
+      }
+      .footer-cooperation-text {
+        margin-top: 5px;
+        color: #bdc3c7; /* Match paragraph color */
+        font-size: 14px; /* Match paragraph font-size */
+      }
+
+      /* --- Responsive Adjustments --- */
+      @media screen and (max-width: 640px) {
+        .email-wrapper {
+          padding: 10px 0;
+        }
+        .email-container {
+          width: 95% !important;
+          border-radius: 10px;
+        }
+        .email-header {
+          padding: 30px 20px;
+        }
+        .email-header h1 {
+          font-size: 22px;
+        }
+
+        .email-body {
+          padding: 25px 20px 20px 20px;
+        }
+
+        .email-body p {
+          font-size: 15px;
+        }
+        .rejection-reason-block {
+          padding: 12px 15px;
+          font-size: 14px;
+        }
+
+        .cta-button {
+          padding: 12px 28px;
+          font-size: 15px;
+        }
+
+        .email-footer {
+          padding: 25px 20px;
+        }
+
+        .email-footer p {
+          font-size: 13px;
+        }
+        .social-icons {
+          font-size: 18px;
+        }
+        .social-icons a {
+          margin: 0 8px;
+        }
+        .footer-cooperation-text {
+          font-size: 13px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <table
+      role="presentation"
+      class="email-wrapper"
+      width="100%"
+      cellspacing="0"
+      cellpadding="0"
+      border="0"
+    >
+      <tr>
+        <td align="center">
+          <div class="email-container">
+            <!-- Header-Section -->
+            <div class="email-header">
+              <img
+                src="../../../../client/public/assets/images/wise-logo.svg"
+              />
+              <!-- You can add class="rejection-title" if you define specific styling for it -->
+              <h1>KYC Information Required</h1>
+            </div>
+
+            <!-- Email Body Content -->
+            <div class="email-body">
+              <p>Hi {{userName}},</p>
+              <p class="rejection-message">
+                We've reviewed your Know Your Customer (KYC) submission for your
+                <strong>{{appName}}</strong> account, and unfortunately, it has
+                been <strong>rejected</strong>.
+              </p>
+
+              {{#if rejectionReason}}
+              <div class="rejection-reason-block">
+                <p><strong>Reason for rejection:</strong></p>
+                <p>{{rejectionReason}}</p>
+              </div>
+              {{/if}}
+
+              <p>
+                Please review the reason(s) provided and re-submit your KYC
+                information with the necessary corrections. You can update your
+                details through your account dashboard.
+              </p>
+
+              {{#if kycUpdateLink}}
+              <div class="cta-button-container">
+                <a href="{{kycUpdateLink}}" class="cta-button update-button"
+                  >Update Your KYC Information</a
+                >
+              </div>
+              {{/if}}
+
+              <p>
+                If you have any questions or need assistance, please don't
+                hesitate to contact our support team.
+              </p>
+            </div>
+
+            <!-- Footer-Section -->
+            <div class="email-footer">
+              <div class="social-icons">
+                <a href="#" title="Twitter">
+                  <span class="box"><i class="fa-brands fa-twitter"></i></span>
+                </a>
+                <a href="#" title="LinkedIn">
+                  <span class="box"><i class="fa-brands fa-linkedin"></i></span>
+                </a>
+                <a href="#" title="Instagram">
+                  <span class="box"><i class="fa-brands fa-instagram"></i></span>
+                </a>
+              </div>
+              <p>
+                Need help? Contact our support team at
+                <a href="mailto:support@{{appName}}.com"
+                  >support@{{appName}}.com</a
+                >
+              </p>
+              <div class="footer-links">
+                <a href="#">Privacy Policy</a><span>|</span>
+                <a href="#">Terms of Service</a><span>|</span>
+                <a href="#">Help Center</a>
+              </div>
+              <p class="footer-cooperation-text">
+                We appreciate your cooperation.
+              </p>
+              <p class="copyright">
+                © {{currentYear}} {{appName}}. All rights reserved.
+              </p>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </body>
 </html>

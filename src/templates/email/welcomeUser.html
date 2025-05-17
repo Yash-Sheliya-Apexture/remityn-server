@@ -1,352 +1,1017 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Welcome to {{appName}}!</title>
-    <style>
-        :root {
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --text-main: #1f2937;
-            --text-secondary: #4b5563;
-            --background: #f9fafb;
-            --card-bg: #ffffff;
-            --border: #e5e7eb;
-            --success: #10b981;
-        }
-        
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+    <style type="text/css">
+      /* Basic Reset (some parts might be duplicated by inline styles but kept for email client quirks) */
+      body,
+      table,
+      td,
+      div,
+      p,
+      a,
+      li,
+      h1,
+      h2,
+      h3,
+      h4,
+      span {
+        box-sizing: border-box;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      body {
+        width: 100% !important;
+        -webkit-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      img {
+        border: 0;
+        line-height: 100%;
+        outline: none;
+        text-decoration: none;
+        -ms-interpolation-mode: bicubic; /* For Outlook */
+      }
+      table,
+      td {
+        border-collapse: collapse; /* For Outlook */
+      }
+      /* Minimal styles that are hard to inline or good as global fallbacks for email clients */
+      a {
+        text-decoration: none;
+      }
+    </style>
+  </head>
+
+  <body
+    style="
+      margin: 0;
+      padding: 0;
+      border: 0;
+      font-size: 100%;
+      vertical-align: baseline;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.6;
+      width: 100% !important;
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+      background-color: #f4f4f4;
+      color: #171717;
+    "
+  >
+    <table
+      role="presentation"
+      width="100%"
+      cellspacing="0"
+      cellpadding="0"
+      border="0"
+      style="
+        margin: 0;
+        padding: 20px 0;
+        border: 0;
+        font-size: 100%;
+        vertical-align: baseline;
+        box-sizing: border-box;
+        font-family: Arial, Helvetica, sans-serif;
+        line-height: 1.6;
+        width: 100%;
+        background-color: #f4f4f4;
+      "
+    >
+      <tr>
+        <td
+          align="center"
+          style="
             margin: 0;
             padding: 0;
-            background-color: var(--background);
-            color: var(--text-main);
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            line-height: 1.5;
-        }
-        
-        .email-container {
-            max-width: 600px;
-            margin: 24px auto;
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        }
-        
-        .email-header {
-            background-color: var(--primary);
-            padding: 32px 24px;
-            text-align: center;
-        }
-        
-        .logo-container {
-            margin-bottom: 16px;
-        }
-        
-        .logo {
-            height: 40px;
-            width: auto;
-        }
-        
-        .welcome-text {
-            color: white;
-            font-size: 24px;
-            font-weight: 700;
-            margin: 0;
-            letter-spacing: -0.025em;
-        }
-        
-        .content {
-            padding: 32px 24px;
-        }
-        
-        .greeting {
-            font-size: 18px;
-            font-weight: 600;
-            margin-top: 0;
-            margin-bottom: 16px;
-        }
-        
-        .message {
-            color: var(--text-secondary);
-            font-size: 16px;
-            line-height: 1.625;
-            margin-bottom: 24px;
-        }
-        
-        .steps-container {
-            background-color: rgba(37, 99, 235, 0.05);
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 24px;
-        }
-        
-        .steps-title {
-            font-weight: 600;
-            margin-top: 0;
-            margin-bottom: 16px;
-            font-size: 17px;
-        }
-        
-        .steps-list {
-            padding-left: 20px;
-            margin: 0;
-        }
-        
-        .step-item {
-            margin-bottom: 12px;
-            color: var(--text-secondary);
-        }
-        
-        .step-item:last-child {
-            margin-bottom: 0;
-        }
-        
-        .verification-badge {
-            display: flex;
-            align-items: center;
-            background-color: #ecfdf5;
-            border-radius: 8px;
-            padding: 12px 16px;
-            margin-bottom: 24px;
-        }
-        
-        .verification-icon {
-            margin-right: 12px;
-            color: var(--success);
-        }
-        
-        .verification-text {
-            color: #065f46;
-            font-size: 15px;
-            font-weight: 500;
-        }
-        
-        .cta-container {
-            text-align: center;
-            margin: 32px 0;
-        }
-        
-        .cta-button {
-            display: inline-block;
-            background-color: var(--primary);
-            color: white !important;
-            font-weight: 600;
-            font-size: 16px;
-            text-decoration: none;
-            padding: 12px 28px;
-            border-radius: 8px;
-            transition: background-color 0.2s ease;
-        }
-        
-        .cta-button:hover {
-            background-color: var(--primary-hover);
-        }
-        
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-        
-        .feature-item {
-            background-color: rgba(37, 99, 235, 0.03);
-            border: 1px solid rgba(37, 99, 235, 0.1);
-            border-radius: 8px;
-            padding: 16px;
-            text-align: center;
-        }
-        
-        .feature-icon {
-            font-size: 24px;
-            margin-bottom: 12px;
-            color: var(--primary);
-        }
-        
-        .feature-title {
-            font-weight: 600;
-            font-size: 15px;
-            margin: 0 0 8px 0;
-        }
-        
-        .feature-desc {
-            color: var(--text-secondary);
-            font-size: 14px;
-            margin: 0;
-        }
-        
-        .divider {
-            height: 1px;
-            background-color: var(--border);
-            margin: 24px 0;
-        }
-        
-        .footer {
-            padding: 24px;
-            background-color: #f8fafc;
-            text-align: center;
-            color: var(--text-secondary);
-            font-size: 14px;
-            border-top: 1px solid var(--border);
-        }
-        
-        .social-links {
-            display: flex;
-            justify-content: center;
-            margin: 16px 0;
-            gap: 16px;
-        }
-        
-        .social-link {
-            color: var(--text-secondary);
-            text-decoration: none;
-        }
-        
-        .help-text {
-            margin-bottom: 8px;
-        }
-        
-        .footer-links {
-            margin-top: 16px;
-        }
-        
-        .footer-link {
-            color: var(--text-secondary);
-            text-decoration: none;
-            margin: 0 8px;
-        }
-        
-        .footer-link:hover {
-            text-decoration: underline;
-        }
-        
-        .copyright {
-            margin-top: 16px;
-            color: #9ca3af;
-        }
-        
-        @media (max-width: 600px) {
-            .email-container {
-                width: 95%;
-                margin: 16px auto;
-            }
-            
-            .email-header {
-                padding: 24px 16px;
-            }
-            
-            .content {
-                padding: 24px 16px;
-            }
-            
-            .features-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="email-container">
-        <div class="email-header">
-            <div class="logo-container">
-                <!-- Replace with your actual logo -->
-                <svg class="logo" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
-                </svg>
+            border: 0;
+            font-size: 100%;
+            vertical-align: baseline;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.6;
+          "
+        >
+          <div
+            style="
+              margin: 0 auto;
+              padding: 0;
+              border: 0;
+              font-size: 100%;
+              vertical-align: baseline;
+              box-sizing: border-box;
+              font-family: Arial, Helvetica, sans-serif;
+              line-height: 1.6;
+              max-width: 600px;
+              background-color: #fff;
+              border-radius: 20px;
+              overflow: hidden;
+            "
+          >
+            <!-- Header-Section -->
+            <div
+              style="
+                margin: 0;
+                padding: 40px 30px;
+                border: 0;
+                font-size: 100%;
+                vertical-align: baseline;
+                box-sizing: border-box;
+                font-family: Arial, Helvetica, sans-serif;
+                line-height: 1.6;
+                background-color: #002330;
+                text-align: center;
+                color: #fff;
+              "
+            >
+              <img
+                src="https://wise-lime.vercel.app/assets/images/wise-logos.png"
+                alt="{{appName}} Logo"
+                style="
+                  margin: 0;
+                  padding: 0;
+                  border: 0;
+                  font-size: 100%;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  line-height: 1.6;
+                  max-width: 150px;
+                  height: auto;
+                  display: block;
+                  margin-left: auto;
+                  margin-right: auto;
+                "
+              />
+
+              <h1
+                style="
+                  margin: 0;
+                  padding: 0;
+                  border: 0;
+                  vertical-align: baseline;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  line-height: 1.6;
+                  font-size: 28px;
+                  font-weight: 700;
+                  margin-top: 10px;
+                  letter-spacing: -0.5px;
+                  color: #fff;
+                "
+              >
+                Welcome to {{appName}}!
+              </h1>
             </div>
-            <h1 class="welcome-text">Welcome to {{appName}}!</h1>
-        </div>
-        
-        <div class="content">
-            <p class="greeting">Hi {{userName}},</p>
-            <p class="message">Thank you for choosing <strong>{{appName}}</strong>! We're excited to have you join our platform where you can manage international transactions with ease and security.</p>
-            
-            <div class="verification-badge">
-                <span class="verification-icon">
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                        <path d="M10 18.3333C14.6024 18.3333 18.3334 14.6024 18.3334 10C18.3334 5.39763 14.6024 1.66667 10 1.66667C5.39765 1.66667 1.66669 5.39763 1.66669 10C1.66669 14.6024 5.39765 18.3333 10 18.3333Z" stroke="#10B981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M7.5 10L9.16667 11.6667L12.5 8.33333" stroke="#10B981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </span>
-                <span class="verification-text">Your account has been created successfully!</span>
+
+            <div
+              style="
+                margin: 0;
+                padding: 35px 16px 25px 16px;
+                border: 0;
+                font-size: 100%;
+                vertical-align: baseline;
+                box-sizing: border-box;
+                font-family: Arial, Helvetica, sans-serif;
+                line-height: 1.6;
+              "
+            >
+              <p
+                style="
+                  margin: 0;
+                  padding: 0;
+                  border: 0;
+                  vertical-align: baseline;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  font-size: 20px;
+                  font-weight: 700;
+                  margin-bottom: 15px;
+                  color: #171717;
+                  line-height: 1.6;
+                "
+              >
+                Hi {{userName}},
+              </p>
+              <p
+                style="
+                  margin: 0;
+                  padding: 0;
+                  border: 0;
+                  vertical-align: baseline;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  font-size: 16px;
+                  margin-bottom: 20px;
+                  color: #6a7282;
+                  line-height: 1.7;
+                "
+              >
+                Thank you for choosing
+                <strong
+                  style="
+                    margin: 0;
+                    padding: 0;
+                    border: 0;
+                    font-size: 100%;
+                    vertical-align: baseline;
+                    box-sizing: border-box;
+                    font-family: Arial, Helvetica, sans-serif;
+                    line-height: 1.7;
+                    font-weight: 500;
+                    color: #adfa1d;
+                  "
+                  >{{appName}}</strong
+                >! We're thrilled to have you join our platform. Get ready to
+                manage your international transactions with unparalleled ease
+                and top-tier security.
+              </p>
+
+              <div
+                style="
+                  margin: 0;
+                  padding: 25px 20px;
+                  border: 0;
+                  font-size: 100%;
+                  vertical-align: baseline;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  line-height: 1.6;
+                  background-color: #f4f4f4;
+                  border-radius: 10px;
+                  margin-bottom: 30px;
+                "
+              >
+                <h2
+                  style="
+                    margin: 0;
+                    padding: 0;
+                    border: 0;
+                    vertical-align: baseline;
+                    box-sizing: border-box;
+                    font-family: Arial, Helvetica, sans-serif;
+                    line-height: 1.6;
+                    font-size: 18px;
+                    font-weight: 500;
+                    color: #171717;
+                    margin-bottom: 15px;
+                    text-align: left;
+                  "
+                >
+                  Let's get you started:
+                </h2>
+                <ul
+                  style="
+                    margin: 0;
+                    border: 0;
+                    font-size: 100%;
+                    vertical-align: baseline;
+                    box-sizing: border-box;
+                    font-family: Arial, Helvetica, sans-serif;
+                    line-height: 1.6;
+                    list-style-type: none;
+                    padding-left: 0;
+                  "
+                >
+                  <li
+                    style="
+                      margin: 0;
+                      padding: 0;
+                      border: 0;
+                      vertical-align: baseline;
+                      box-sizing: border-box;
+                      font-family: Arial, Helvetica, sans-serif;
+                      font-size: 16px;
+                      color: #6a7282;
+                      margin-bottom: 15px;
+                      font-weight: 400;
+                      display: flex;
+                      text-align: left;
+                      line-height: 1.6;
+                    "
+                  >
+                    <span>1.</span>Complete your profile details and upload your
+                    KYC documents for verification.
+                  </li>
+
+                  <li
+                    style="
+                      margin: 0;
+                      padding: 0;
+                      border: 0;
+                      vertical-align: baseline;
+                      box-sizing: border-box;
+                      font-family: Arial, Helvetica, sans-serif;
+                      font-size: 16px;
+                      color: #6a7282;
+                      margin-bottom: 15px;
+                      font-weight: 400;
+                      display: flex;
+                      text-align: left;
+                      line-height: 1.6;
+                    "
+                  >
+                    <span
+                      >2.</span
+                    >Explore the dashboard to familiarize yourself with all our
+                    powerful features.
+                  </li>
+                  <li
+                    style="
+                      margin: 0;
+                      padding: 0;
+                      border: 0;
+                      vertical-align: baseline;
+                      box-sizing: border-box;
+                      font-family: Arial, Helvetica, sans-serif;
+                      font-size: 16px;
+                      color: #6a7282;
+                      margin-bottom: 15px;
+                      font-weight: 400;
+                      display: flex;
+                      text-align: left;
+                      line-height: 1.6;
+                    "
+                  >
+                    <span
+                      >3.</span
+                    >Set up your payment preferences and enhance your security
+                    settings.
+                  </li>
+                  <li
+                    style="
+                      margin: 0;
+                      padding: 0;
+                      border: 0;
+                      vertical-align: baseline;
+                      box-sizing: border-box;
+                      font-family: Arial, Helvetica, sans-serif;
+                      font-size: 16px;
+                      color: #6a7282;
+                      margin-bottom: 0px;
+                      font-weight: 400;
+                      display: flex;
+                      text-align: left;
+                      line-height: 1.6;
+                    "
+                  >
+                    <span
+                      >4.</span
+                    >Make your first international transaction smoothly and
+                    confidently.
+                  </li>
+                </ul>
+              </div>
+
+              <!-- For features-section, using tables for better email client compatibility as grid is not well supported -->
+              <table
+                role="presentation"
+                cellspacing="0"
+                cellpadding="0"
+                border="0"
+                width="100%"
+                style="
+                  margin: 0 0 35px 0;
+                  padding: 0;
+                  font-size: 100%;
+                  vertical-align: baseline;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  line-height: 1.6;
+                "
+              >
+                <tr>
+                  <td
+                    style="
+                      margin: 0;
+                      padding: 0 8px 16px 0;
+                      border: 0;
+                      font-size: 100%;
+                      vertical-align: top;
+                      box-sizing: border-box;
+                      font-family: Arial, Helvetica, sans-serif;
+                      line-height: 1.6;
+                      width: 50%;
+                    "
+                  >
+                    <div
+                      style="
+                        margin: 0;
+                        padding: 16px;
+                        border: 1px solid #e3e3e3;
+                        font-size: 100%;
+                        vertical-align: baseline;
+                        box-sizing: border-box;
+                        font-family: Arial, Helvetica, sans-serif;
+                        line-height: 1.6;
+                        background-color: #f4f4f4;
+                        border-radius: 10px;
+                        text-align: center;
+                        height: 100%;
+                      "
+                    >
+                      <img
+                        src="https://wise-lime.vercel.app/assets/images/security.png"
+                        alt="image1"
+                        style="width: 50px; margin-bottom: 10px"
+                      />
+
+                      <h3
+                        style="
+                          margin: 0 0 8px 0;
+                          padding: 0;
+                          border: 0;
+                          vertical-align: baseline;
+                          box-sizing: border-box;
+                          font-family: Arial, Helvetica, sans-serif;
+                          line-height: 1.6;
+                          font-size: 16px;
+                          font-weight: 500;
+                          color: #171717;
+                        "
+                      >
+                        Secure Transactions
+                      </h3>
+
+                      <p
+                        style="
+                          margin: 0;
+                          padding: 0;
+                          border: 0;
+                          vertical-align: baseline;
+                          box-sizing: border-box;
+                          font-family: Arial, Helvetica, sans-serif;
+                          line-height: 1.6;
+                          font-size: 14px;
+                          color: #6a7282;
+                        "
+                      >
+                        Enjoy bank-level security for all your financial
+                        activities, ensuring your money is always protected.
+                      </p>
+                    </div>
+                  </td>
+
+                  <td
+                    style="
+                      margin: 0;
+                      padding: 0 0 16px 8px;
+                      border: 0;
+                      font-size: 100%;
+                      vertical-align: top;
+                      box-sizing: border-box;
+                      font-family: Arial, Helvetica, sans-serif;
+                      line-height: 1.6;
+                      width: 50%;
+                    "
+                  >
+                    <div
+                      style="
+                        margin: 0;
+                        padding: 16px;
+                        border: 1px solid #e3e3e3;
+                        font-size: 100%;
+                        vertical-align: baseline;
+                        box-sizing: border-box;
+                        font-family: Arial, Helvetica, sans-serif;
+                        line-height: 1.6;
+                        background-color: #f4f4f4;
+                        border-radius: 10px;
+                        text-align: center;
+                        height: 100%;
+                      "
+                    >
+                      <img
+                        src="https://wise-lime.vercel.app/assets/images/globle.png"
+                        alt="image2"
+                        style="width: 50px; margin-bottom: 10px"
+                      />
+
+                      <h3
+                        style="
+                          margin: 0 0 8px 0;
+                          padding: 0;
+                          border: 0;
+                          vertical-align: baseline;
+                          box-sizing: border-box;
+                          font-family: Arial, Helvetica, sans-serif;
+                          line-height: 1.6;
+                          font-size: 16px;
+                          font-weight: 500;
+                          color: #171717;
+                        "
+                      >
+                        Global Coverage
+                      </h3>
+                      <p
+                        style="
+                          margin: 0;
+                          padding: 0;
+                          border: 0;
+                          vertical-align: baseline;
+                          box-sizing: border-box;
+                          font-family: Arial, Helvetica, sans-serif;
+                          line-height: 1.6;
+                          font-size: 14px;
+                          color: #6a7282;
+                        "
+                      >
+                        Send money to over 150 countries with speed and
+                        ease—wherever ones are, we’ve got you covered.
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    style="
+                      margin: 0;
+                      padding: 0 8px 0 0;
+                      border: 0;
+                      font-size: 100%;
+                      vertical-align: top;
+                      box-sizing: border-box;
+                      font-family: Arial, Helvetica, sans-serif;
+                      line-height: 1.6;
+                      width: 50%;
+                    "
+                  >
+                    <div
+                      style="
+                        margin: 0;
+                        padding: 16px;
+                        border: 1px solid #e3e3e3;
+                        font-size: 100%;
+                        vertical-align: baseline;
+                        box-sizing: border-box;
+                        font-family: Arial, Helvetica, sans-serif;
+                        line-height: 1.6;
+                        background-color: #f4f4f4;
+                        border-radius: 10px;
+                        text-align: center;
+                        height: 100%;
+                      "
+                    >
+                      <img
+                        src="https://wise-lime.vercel.app/assets/images/Competitive.png"
+                        alt="image3"
+                        style="width: 50px; margin-bottom: 10px"
+                      />
+
+                      <h3
+                        style="
+                          margin: 0 0 8px 0;
+                          padding: 0;
+                          border: 0;
+                          vertical-align: baseline;
+                          box-sizing: border-box;
+                          font-family: Arial, Helvetica, sans-serif;
+                          line-height: 1.6;
+                          font-size: 16px;
+                          font-weight: 500;
+                          color: #171717;
+                        "
+                      >
+                        Competitive Rates
+                      </h3>
+                      <p
+                        style="
+                          margin: 0;
+                          padding: 0;
+                          border: 0;
+                          vertical-align: baseline;
+                          box-sizing: border-box;
+                          font-family: Arial, Helvetica, sans-serif;
+                          line-height: 1.6;
+                          font-size: 14px;
+                          color: #6a7282;
+                        "
+                      >
+                        Benefit from transparent, low-fee pricing designed to
+                        give you more value for every transaction.
+                      </p>
+                    </div>
+                  </td>
+                  <td
+                    style="
+                      margin: 0;
+                      padding: 0 0 0 8px;
+                      border: 0;
+                      font-size: 100%;
+                      vertical-align: top;
+                      box-sizing: border-box;
+                      font-family: Arial, Helvetica, sans-serif;
+                      line-height: 1.6;
+                      width: 50%;
+                    "
+                  >
+                    <div
+                      style="
+                        margin: 0;
+                        padding: 16px;
+                        border: 1px solid #e3e3e3;
+                        font-size: 100%;
+                        vertical-align: baseline;
+                        box-sizing: border-box;
+                        font-family: Arial, Helvetica, sans-serif;
+                        line-height: 1.6;
+                        background-color: #f4f4f4;
+                        border-radius: 10px;
+                        text-align: center;
+                        height: 100%;
+                      "
+                    >
+                      <img
+                        src="https://wise-lime.vercel.app/assets/images/Mobile.png"
+                        alt="image4"
+                        style="width: 50px; margin-bottom: 10px"
+                      />
+
+                      <h3
+                        style="
+                          margin: 0 0 8px 0;
+                          padding: 0;
+                          border: 0;
+                          vertical-align: baseline;
+                          box-sizing: border-box;
+                          font-family: Arial, Helvetica, sans-serif;
+                          line-height: 1.6;
+                          font-size: 16px;
+                          font-weight: 500;
+                          color: #171717;
+                        "
+                      >
+                        Mobile Access
+                      </h3>
+                      <p
+                        style="
+                          margin: 0;
+                          padding: 0;
+                          border: 0;
+                          vertical-align: baseline;
+                          box-sizing: border-box;
+                          font-family: Arial, Helvetica, sans-serif;
+                          line-height: 1.6;
+                          font-size: 14px;
+                          color: #6a7282;
+                        "
+                      >
+                        Transfer funds on the go. Our platform gives you full
+                        control anytime, from any device.
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+
+              {{#if loginLink}}
+              <div
+                style="
+                  margin: 10px 0 35px 0;
+                  padding: 0;
+                  border: 0;
+                  font-size: 100%;
+                  vertical-align: baseline;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  line-height: 1.6;
+                  text-align: center;
+                "
+              >
+                <a
+                  href="{{loginLink}}"
+                  style="
+                    margin: 0;
+                    padding: 12px 32px;
+                    border: 0;
+                    vertical-align: baseline;
+                    box-sizing: border-box;
+                    font-family: Arial, Helvetica, sans-serif;
+                    line-height: 1.6;
+                    display: inline-block;
+                    background-color: #adfa1d;
+                    color: #171717 !important;
+                    font-weight: 500;
+                    text-decoration: none;
+                    border-radius: 30px;
+                  "
+                  >Access Your Dashboard</a
+                >
+              </div>
+              {{/if}}
+
+              <p
+                style="
+                  margin: 0;
+                  padding: 0;
+                  border: 0;
+                  vertical-align: baseline;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  font-size: 16px;
+                  margin-bottom: 20px;
+                  color: #6a7282;
+                  line-height: 1.7;
+                "
+              >
+                If you have any questions or need assistance, our dedicated
+                support team is available 24/7 to help you. We're here for you
+                every step of the way!
+              </p>
             </div>
-            
-            <div class="steps-container">
-                <h3 class="steps-title">Let's get you started:</h3>
-                <ol class="steps-list">
-                    <li class="step-item">Complete your profile details and upload your KYC documents for verification</li>
-                    <li class="step-item">Explore the dashboard to familiarize yourself with all features</li>
-                    <li class="step-item">Set up your payment preferences and security settings</li>
-                    <li class="step-item">Make your first international transaction with ease</li>
-                </ol>
+
+            <!-- Footer-Section -->
+            <div
+              style="
+                margin: 0;
+                padding: 30px 40px;
+                border: 0;
+                box-sizing: border-box;
+                font-family: Arial, Helvetica, sans-serif;
+                line-height: 1.6;
+                background-color: #002330;
+                color: #f4f4f4;
+                text-align: center;
+                font-size: 14px;
+              "
+            >
+              <div
+                style="
+                  margin: 0 0 35px 0;
+                  padding: 0;
+                  border: 0;
+                  vertical-align: baseline;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  line-height: 1.6;
+                  font-size: 20px;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  gap: 10px;
+                "
+              >
+                <!-- For social icons, using a table for better email client compatibility as flex is not well supported -->
+                <table
+                  role="presentation"
+                  border="0"
+                  cellpadding="0"
+                  cellspacing="0"
+                  style="margin: 0 auto; border-collapse: collapse"
+                >
+                  <tr>
+                    <td style="padding: 0 5px">
+                      <a
+                        href="#"
+                        title="Twitter"
+                        style="
+                          margin: 0;
+                          padding: 0;
+                          border: 0;
+                          font-size: 100%;
+                          vertical-align: baseline;
+                          box-sizing: border-box;
+                          font-family: Arial, Helvetica, sans-serif;
+                          line-height: 1.6;
+                          color: #adfa1d;
+                          text-decoration: none;
+                          font-weight: 400;
+                        "
+                      >
+                        <img
+                          src="https://wise-lime.vercel.app/assets/images/twitter.png"
+                          alt="twitter"
+                          style="width: 40px"
+                        />
+                      </a>
+                    </td>
+
+                    <td style="padding: 0 5px">
+                      <a
+                        href="#"
+                        title="LinkedIn"
+                        style="
+                          margin: 0;
+                          padding: 0;
+                          border: 0;
+                          font-size: 100%;
+                          vertical-align: baseline;
+                          box-sizing: border-box;
+                          font-family: Arial, Helvetica, sans-serif;
+                          line-height: 1.6;
+                          color: #adfa1d;
+                          text-decoration: none;
+                          font-weight: 400;
+                        "
+                      >
+                        <img
+                          src="https://wise-lime.vercel.app/assets/images/LinkedIn.png"
+                          alt="LinkedIn"
+                          style="width: 40px"
+                        />
+                      </a>
+                    </td>
+                    <td style="padding: 0 5px">
+                      <a
+                        href="#"
+                        title="Instagram"
+                        style="
+                          margin: 0;
+                          padding: 0;
+                          border: 0;
+                          font-size: 100%;
+                          vertical-align: baseline;
+                          box-sizing: border-box;
+                          font-family: Arial, Helvetica, sans-serif;
+                          line-height: 1.6;
+                          color: #adfa1d;
+                          text-decoration: none;
+                          font-weight: 400;
+                        "
+                      >
+                        <img
+                          src="https://wise-lime.vercel.app/assets/images/instagram.png"
+                          ;
+                          alt="instagram"
+                          style="width: 40px"
+                        />
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <p
+                style="
+                  border: 0;
+                  vertical-align: baseline;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  margin: 0 0 10px 0;
+                  padding: 0;
+                  line-height: 1.6;
+                  font-size: 14px;
+                  color: #f4f4f4;
+                "
+              >
+                Need help? Contact our support team at
+                <a
+                  href="mailto:support@{{appName}}.com"
+                  style="
+                    padding: 0;
+                    border: 0;
+                    font-size: 100%;
+                    vertical-align: baseline;
+                    box-sizing: border-box;
+                    font-family: Arial, Helvetica, sans-serif;
+                    line-height: 1.6;
+                    color: #adfa1d;
+                    text-decoration: none;
+                    font-weight: 400;
+                    margin: 0;
+                  "
+                  >support@{{appName}}.com</a
+                >
+              </p>
+
+              <div
+                style="
+                  margin: 0;
+                  padding: 0;
+                  border: 0;
+                  font-size: 100%;
+                  vertical-align: baseline;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  line-height: 1.6;
+                "
+              >
+                <a
+                  href="https://wise-lime.vercel.app/privacy-policy"
+                  style="
+                    padding: 0;
+                    border: 0;
+                    font-size: 100%;
+                    vertical-align: baseline;
+                    box-sizing: border-box;
+                    font-family: Arial, Helvetica, sans-serif;
+                    line-height: 1.6;
+                    color: #adfa1d;
+                    text-decoration: none;
+                    font-weight: 400;
+                    margin: 0;
+                  "
+                  >Privacy Policy</a
+                ><span
+                  style="
+                    margin: 0 10px;
+                    padding: 0;
+                    border: 0;
+                    font-size: 100%;
+                    vertical-align: baseline;
+                    box-sizing: border-box;
+                    font-family: Arial, Helvetica, sans-serif;
+                    line-height: 1.6;
+                    color: #6a7282;
+                  "
+                  >|</span
+                >
+                <a
+                  href="https://wise-lime.vercel.app/terms-and-conditions"
+                  style="
+                    padding: 0;
+                    border: 0;
+                    font-size: 100%;
+                    vertical-align: baseline;
+                    box-sizing: border-box;
+                    font-family: Arial, Helvetica, sans-serif;
+                    line-height: 1.6;
+                    color: #adfa1d;
+                    text-decoration: none;
+                    font-weight: 400;
+                    margin: 0;
+                  "
+                  >Terms of Service</a
+                ><span
+                  style="
+                    margin: 0 10px;
+                    padding: 0;
+                    border: 0;
+                    font-size: 100%;
+                    vertical-align: baseline;
+                    box-sizing: border-box;
+                    font-family: Arial, Helvetica, sans-serif;
+                    line-height: 1.6;
+                    color: #6a7282;
+                  "
+                  >|</span
+                >
+                <a
+                  href="https://wise-lime.vercel.app/faqs"
+                  style="
+                    padding: 0;
+                    border: 0;
+                    font-size: 100%;
+                    vertical-align: baseline;
+                    box-sizing: border-box;
+                    font-family: Arial, Helvetica, sans-serif;
+                    line-height: 1.6;
+                    color: #adfa1d;
+                    text-decoration: none;
+                    font-weight: 400;
+                    margin: 0;
+                  "
+                  >Help Center</a
+                >
+              </div>
+
+              <p
+                style="
+                  padding: 0;
+                  border: 0;
+                  vertical-align: baseline;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  line-height: 1.6;
+                  font-size: 14px;
+                  color: white;
+                  margin: 10px 0 0 0;
+                "
+              >
+                © {{currentYear}} {{appName}}. All rights reserved.
+              </p>
+
+              <p
+                style="
+                  padding: 0;
+                  border: 0;
+                  vertical-align: baseline;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  line-height: 1.6;
+                  font-size: 14px;
+                  color: white;
+                  margin: 5px 0 0 0;
+                "
+              >
+                If you did not sign up for this account, please disregard this
+                email.
+              </p>
             </div>
-            
-            <div class="features-grid">
-                <div class="feature-item">
-                    <div class="feature-icon">🔒</div>
-                    <h4 class="feature-title">Secure Transactions</h4>
-                    <p class="feature-desc">Bank-level security for all your financial activities</p>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon">🌐</div>
-                    <h4 class="feature-title">Global Coverage</h4>
-                    <p class="feature-desc">Send money to 150+ countries worldwide</p>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon">💱</div>
-                    <h4 class="feature-title">Competitive Rates</h4>
-                    <p class="feature-desc">Save on fees with our transparent pricing</p>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon">📱</div>
-                    <h4 class="feature-title">Mobile Access</h4>
-                    <p class="feature-desc">Manage transactions on the go</p>
-                </div>
-            </div>
-            
-            {{#if loginLink}}
-            <div class="cta-container">
-                <a href="{{loginLink}}" class="cta-button">Access Your Dashboard</a>
-            </div>
-            {{/if}}
-            
-            <p class="message">If you have any questions or need assistance, our support team is available 24/7 to help you.</p>
-        </div>
-        
-        <div class="footer">
-            <div class="social-links">
-                <a href="#" class="social-link">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"></path>
-                    </svg>
-                </a>
-                <a href="#" class="social-link">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"></path>
-                    </svg>
-                </a>
-                <a href="#" class="social-link">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"></path>
-                    </svg>
-                </a>
-            </div>
-            
-            <p class="help-text">Need help? Contact our support team at <a href="mailto:support@{{appName}}.com" style="color: var(--primary);">support@{{appName}}.com</a></p>
-            
-            <div class="footer-links">
-                <a href="#" class="footer-link">Privacy Policy</a>
-                <a href="#" class="footer-link">Terms of Service</a>
-                <a href="#" class="footer-link">Help Center</a>
-            </div>
-            
-            <p class="copyright">© {{currentYear}} {{appName}}. All rights reserved.</p>
-            <p style="color: #9ca3af; font-size: 12px; margin-top: 8px;">If you did not sign up for this account, please disregard this email.</p>
-        </div>
-    </div>
-</body>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </body>
 </html>

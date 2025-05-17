@@ -651,6 +651,163 @@
 // });
 
 
+// // server.js
+// import express from 'express';
+// import cors from 'cors';
+// import config from './config/index.js';
+// import connectDB from './utils/database.js';
+// import userRoutes from './routes/user.routes.js';
+// import errorHandler from './middleware/error.middleware.js';
+// import authRoutes from './routes/auth.routes.js';
+// import authMiddleware from './middleware/auth.middleware.js';
+// import adminUserRoutes from './routes/admin/user.admin.routes.js';
+// import kycRoutes from './routes/kyc.routes.js'; // Import user KYC routes
+// import adminKycRoutes from './routes/admin/kyc.admin.routes.js'; // Import admin KYC routes
+// import accountRoutes from './routes/account.routes.js'; // Import account routes
+// import currencyRoutes from './routes/currency.routes.js'; // Import currency routes
+// import adminCurrencyRoutes from './routes/admin/currency.admin.routes.js'; // Import admin currency routes
+// import adminPaymentRoutes from './routes/admin/payment.admin.routes.js'; // Import admin payment routes
+// import paymentRoutes from './routes/payment.routes.js'; // Import payment routes
+// import inboxRoutes from './routes/inbox.routes.js'; // <-- Import User inbox routes
+// import exchangeRateRoutes from './routes/exchangeRate.routes.js';
+// import exchangeRateService from './services/exchangeRate.service.js';
+// import recipientRoutes from './routes/recipient.routes.js'; // Import recipient routes
+// import transferRoutes from './routes/transfer.routes.js'; // Import transfer routes
+// import adminTransferRoutes from './routes/admin/transfer.admin.routes.js'; // <-- Import Admin transfer routes
+// import adminInboxRoutes from './routes/admin/inbox.admin.routes.js'; // <-- Import Admin transfer routes
+// import adminStatsRoutes from './routes/admin/stats.admin.routes.js'; // <-- ADD THIS IMPORT
+// import adminActivityRoutes from './routes/admin/activity.admin.routes.js'; // <-- ADD THIS IMPORT
+// import cron from 'node-cron';
+// import dotenv from 'dotenv';
+// import helmet from 'helmet';
+// import compression from 'compression';
+// import morgan from 'morgan';
+// import cookieParser from 'cookie-parser';
+// import path from 'path'; // Import path module
+// import { fileURLToPath } from 'url'; // Import fileURLToPath from 'url'
+// import { dirname } from 'path';      // Import dirname from 'path'
+// import rateLimit from 'express-rate-limit'; // Import rate limiter
+// import AppError from './utils/AppError.js'; // Import AppError if used in error handler
+
+// dotenv.config(); // Load environment variables from .env file
+
+// const app = express();
+
+// // --- Security Middleware ---
+// app.use(helmet.crossOriginOpenerPolicy({ policy: "same-origin-allow-popups" }));
+// app.use(helmet.hidePoweredBy());
+// app.use(helmet.xssFilter());
+// app.use(helmet.noSniff());
+// app.use(helmet.ieNoOpen());
+// app.use(helmet.frameguard({ action: 'deny' }));
+// // app.use(helmet.contentSecurityPolicy({ ... })); // Configure properly if needed
+
+// const authLimiter = rateLimit({
+//     windowMs: 15 * 60 * 1000, max: 100,
+//     message: 'Too many requests from this IP, please try again after 15 minutes',
+//     standardHeaders: true, legacyHeaders: false,
+// });
+// app.use('/api/auth/login', authLimiter);
+// // ... other rate limited routes
+
+// // --- Core Middleware ---
+// app.use(compression());
+// if (process.env.NODE_ENV === 'development') {
+//     app.use(morgan('dev'));
+// }
+// const allowedOrigins = [ 'http://localhost:3000', 'https://wise-lime.vercel.app' ];
+// app.use(cors({
+//     origin: (origin, callback) => {
+//         if (!origin || allowedOrigins.includes(origin)) {
+//             callback(null, true);
+//         } else {
+//             callback(new Error('Not allowed by CORS'));
+//         }
+//     },
+//     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+//     allowedHeaders: ['Content-Type', 'Authorization'],
+//     credentials: true,
+// }));
+// app.use(cookieParser());
+// app.use(express.json({ limit: '10kb' }));
+// app.use(express.urlencoded({ extended: true }));
+
+// app.use((req, res, next) => {
+//     if (process.env.NODE_ENV === 'development') {
+//         res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+//         res.setHeader('Pragma', 'no-cache');
+//         res.setHeader('Expires', '0');
+//     }
+//     next();
+// });
+
+
+// // --- Database Connection ---
+// connectDB();
+
+// // --- Static Files ---
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = dirname(__filename);
+// app.use(express.static(path.join(__dirname, 'public')));
+
+
+// // --- Health Check & Root ---
+// app.get('/health', (req, res) => res.status(200).send('OK'));
+// app.get('/', (req, res) => res.send('Welcome to the API server!'));
+
+// // --- API Routes ---
+// app.use('/api/auth', authRoutes);
+// app.use('/api/kyc', kycRoutes);
+// app.use('/api/accounts', authMiddleware.protect, accountRoutes);
+// app.use('/api/currencies', currencyRoutes);
+// app.use('/api/payments', authMiddleware.protect, paymentRoutes);
+// app.use('/api/exchange-rates', exchangeRateRoutes);
+// app.use('/api/recipients', authMiddleware.protect, recipientRoutes);
+// app.use('/api/transfers', authMiddleware.protect, transferRoutes);
+// app.use('/api/dashboard/users', authMiddleware.protect, userRoutes);
+// app.use('/api/inbox', inboxRoutes); // <-- Add User Inbox Routes (protection is inside the route file)
+
+// // Admin Routes
+// app.use('/api/admin/users', authMiddleware.protect, authMiddleware.admin, adminUserRoutes); // (Looks correct)
+// app.use('/api/admin/kyc', authMiddleware.protect, authMiddleware.admin, adminKycRoutes);
+// app.use('/api/admin/currencies', authMiddleware.protect, authMiddleware.admin, adminCurrencyRoutes);
+// app.use('/api/admin/payments', authMiddleware.protect, authMiddleware.admin, adminPaymentRoutes);
+// app.use('/api/admin/transfers', authMiddleware.protect, authMiddleware.admin, adminTransferRoutes);
+// app.use('/api/admin/inbox', authMiddleware.protect, authMiddleware.admin, adminInboxRoutes);
+// app.use('/api/admin/stats', authMiddleware.protect, authMiddleware.admin, adminStatsRoutes); // <-- ADD THIS LINE
+// app.use('/api/admin/activity', authMiddleware.protect, authMiddleware.admin, adminActivityRoutes); // <-- ADD THIS LINE
+
+// // --- Cron Jobs ---
+// cron.schedule('0 */8 * * *', async () => { // <--- MODIFIED LINE
+//     console.log('Running exchange rate update cron job (every 5 minutes)...');
+//     try {
+//         const updated = await exchangeRateService.updateExchangeRates();
+//         if (updated) {
+//             console.log('Exchange rate update cron job completed successfully.');
+//         } else {
+//             console.log('Exchange rate update cron job did not update (check service logs).');
+//         }
+//     } catch (error) {
+//          console.error('Exchange rate update cron job failed:', error);
+//     }
+// });
+
+// // Initial exchange rate update on server start (keep this)
+// exchangeRateService.updateExchangeRates().catch(error => {
+//     console.error('Initial exchange rate load failed on server start:', error);
+// });
+
+
+// // --- Global Error Handling Middleware ---
+// app.use(errorHandler);
+
+// // --- Server Startup ---
+// const PORT = config.port;
+// app.listen(PORT, () => {
+//     console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
+// });
+
+
 // server.js
 import express from 'express';
 import cors from 'cors';
@@ -777,32 +934,39 @@ app.use('/api/admin/inbox', authMiddleware.protect, authMiddleware.admin, adminI
 app.use('/api/admin/stats', authMiddleware.protect, authMiddleware.admin, adminStatsRoutes); // <-- ADD THIS LINE
 app.use('/api/admin/activity', authMiddleware.protect, authMiddleware.admin, adminActivityRoutes); // <-- ADD THIS LINE
 
-// --- Cron Jobs ---
-cron.schedule('0 */8 * * *', async () => { // <--- MODIFIED LINE
-    console.log('Running exchange rate update cron job (every 5 minutes)...');
+// --- Exchange Rate Watcher (Replace cron with setInterval) ---
+const SCRAPE_INTERVAL_MS = 60 * 1000; // 1 minute
+
+async function runExchangeRateWatcher() {
+    console.log(`Running exchange rate watcher...`);
     try {
+        // updateExchangeRates now internally calls the scraper and saves
         const updated = await exchangeRateService.updateExchangeRates();
         if (updated) {
-            console.log('Exchange rate update cron job completed successfully.');
+            console.log('Exchange rate watcher: Update completed successfully.');
         } else {
-            console.log('Exchange rate update cron job did not update (check service logs).');
+            console.log('Exchange rate watcher: No rates scraped or update failed.');
         }
     } catch (error) {
-         console.error('Exchange rate update cron job failed:', error);
+         console.error('Exchange rate watcher failed:', error);
+         // The updateExchangeRates service should catch most errors,
+         // but a critical unhandled error here will still log.
     }
-});
+}
 
-// Initial exchange rate update on server start (keep this)
-exchangeRateService.updateExchangeRates().catch(error => {
-    console.error('Initial exchange rate load failed on server start:', error);
-});
+// Start the watcher immediately on server startup
+runExchangeRateWatcher();
+
+// Then schedule it to run every minute
+console.log(`Scheduling exchange rate watcher to run every ${SCRAPE_INTERVAL_MS / 1000} seconds.`);
+setInterval(runExchangeRateWatcher, SCRAPE_INTERVAL_MS);
 
 
-// --- Global Error Handling Middleware ---
+// --- Global Error Handling Middleware (Keep existing) ---
 app.use(errorHandler);
 
-// --- Server Startup ---
-const PORT = config.port;
+// --- Server Startup (Keep existing) ---
+const PORT = config.port; // Using config.port which comes from process.env.PORT
 app.listen(PORT, () => {
     console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
 });
