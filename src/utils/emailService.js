@@ -76,7 +76,7 @@ async function sendEmail({ to, subject, html, text }) {
         return null;
     }
     const mailOptions = {
-        from: `"${config.email.emailFromName || 'Wise App Clone'}" <${config.email.emailUser}>`,
+        from: `"${config.email.emailFromName || 'Remityn'}" <${config.email.emailUser}>`,
         to,
         subject,
         html,

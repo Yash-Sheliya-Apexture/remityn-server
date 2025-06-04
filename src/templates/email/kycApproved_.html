@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>KYC Action Required - {{appName}}</title>
+    <title>KYC Approved - {{appName}}</title>
 
     <link
       rel="stylesheet"
@@ -28,7 +28,7 @@
       -webkit-text-size-adjust: 100%;
       -ms-text-size-adjust: 100%;
       background-color: #f4f4f4;
-      color: #22282a;
+      color: #171717;
     "
   >
     <table
@@ -47,7 +47,7 @@
         line-height: 1.6;
         width: 100%;
         background-color: #f4f4f4;
-        margin: 24px 0px;
+        margin:24px 0px;
       "
     >
       <tr>
@@ -66,6 +66,7 @@
         >
           <div
             style="
+              /* from .email-container & global reset */
               margin: 0 auto;
               padding: 0;
               border: 0;
@@ -75,9 +76,10 @@
               font-family: Arial, Helvetica, sans-serif;
               line-height: 1.6;
               max-width: 600px;
-              background-color: #eeecec;
+              background-color: #fff;
               border-radius: 20px;
               overflow: hidden;
+              box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
             "
           >
             <!-- Header-Section -->
@@ -91,15 +93,16 @@
                 box-sizing: border-box;
                 font-family: Arial, Helvetica, sans-serif;
                 line-height: 1.6;
-                background-color: #22282a;
+                background-color: #002330;
                 text-align: center;
-                color: #d5e1e7;
+                color: #fff;
               "
             >
               <img
-                src="https://www.remityn.com/assets/images/main_logo.png"
+                src="https://www.remityn.com/assets/images/dark_logo.png"
                 alt="{{appName}} Logo"
                 style="
+                  /* from .email-header img.app-logo & global reset */
                   margin: 0;
                   padding: 0;
                   border: 0;
@@ -114,9 +117,9 @@
                   margin-right: auto;
                 "
               />
-
               <h1
                 style="
+                  /* from .email-header h1 & global reset */
                   margin: 10px 0 0 0;
                   padding: 0;
                   border: 0;
@@ -127,16 +130,17 @@
                   font-size: 26px;
                   font-weight: 700;
                   letter-spacing: -0.5px;
-                  color: #d5e1e7;
+                  color: #fff;
                 "
               >
-                KYC Information Required
+                KYC Approved!
               </h1>
             </div>
 
             <!-- Email Body Content -->
             <div
               style="
+                /* from .email-body & global reset */
                 margin: 0;
                 padding: 30px 16px;
                 border: 0;
@@ -149,6 +153,7 @@
             >
               <p
                 style="
+                  /* from .email-body p & global reset */
                   margin: 0;
                   padding: 0;
                   border: 0;
@@ -158,16 +163,16 @@
                   font-size: 20px;
                   font-weight: 700;
                   margin-bottom: 15px;
-                  color: #22282a;
+                  color: #171717;
                   line-height: 1.6;
                   text-transform: capitalize;
                 "
               >
                 Hi {{userName}},
               </p>
-
               <p
                 style="
+                  /* from .email-body p, .success-message (for strong) & global reset */
                   margin: 0;
                   padding: 0;
                   border: 0;
@@ -176,77 +181,33 @@
                   font-family: Arial, Helvetica, sans-serif;
                   font-size: 16px;
                   margin-bottom: 20px;
-                  color: #394247;
+                  color: #6a7282;
                   line-height: 1.7;
                 "
               >
-                We've reviewed your Know Your Customer (KYC) submission for your
-                <strong style="font-weight: 700; color: #22282a"
+                Great news! Your Know Your Customer (KYC) verification for your
+                <strong
+                  style="
+                    font-weight: 500; /* from .email-body strong */
+                    color: #171717; /* from .email-body strong */
+                    /* Inherits font-family, etc. */
+                  "
                   >{{appName}}</strong
                 >
-                account, and unfortunately, it has been
-                <strong style="color: #dc3545; font-weight: 600"
-                  >Rejected</strong
+                account has been successfully
+                <strong
+                  style="
+                    color: #28a745; /* from .email-body .success-message strong */
+                    font-weight: 600; /* from .email-body .success-message strong */
+                    /* Inherits font-family, etc. */
+                  "
+                  >Approved</strong
                 >.
               </p>
 
-              {{#if rejectionReason}}
-              <div
-                style="
-                  padding: 15px 20px;
-                  border-width: 0 0 0 4px;
-                  border-style: solid;
-                  border-color: #c2313f;
-                  font-size: 16px;
-                  vertical-align: baseline;
-                  box-sizing: border-box;
-                  font-family: Arial, Helvetica, sans-serif;
-                  line-height: 1.6;
-                  background-color: #ffc0c5;
-                  margin: 25px 0;
-                  color: #721c24;
-                  border-radius: 6px;
-                "
-              >
-                <p
-                  style="
-                    margin: 0 0 8px 0;
-                    padding: 0;
-                    border: 0;
-                    font-size: 100%; /* Inherits 15px from parent */
-                    vertical-align: baseline;
-                    box-sizing: border-box;
-                    font-family: Arial, Helvetica, sans-serif;
-                    line-height: 1.6;
-                    color: #721c24;
-                  "
-                >
-                  <strong
-                    style="color: #721c24; font-size: large; font-weight: 500"
-                    >Reason for rejection:</strong
-                  >
-                </p>
-
-                <p
-                  style="
-                    margin: 0;
-                    padding: 0;
-                    border: 0;
-                    font-size: 100%; /* Inherits 15px from parent */
-                    vertical-align: baseline;
-                    box-sizing: border-box;
-                    font-family: Arial, Helvetica, sans-serif;
-                    line-height: 1.6;
-                    color: #721c24;
-                  "
-                >
-                  {{rejectionReason}}
-                </p>
-              </div>
-              {{/if}}
-
               <p
                 style="
+                  /* from .email-body p & global reset */
                   margin: 0;
                   padding: 0;
                   border: 0;
@@ -255,19 +216,19 @@
                   font-family: Arial, Helvetica, sans-serif;
                   font-size: 16px;
                   margin-bottom: 20px;
-                  color: #394247;
+                  color: #6a7282;
                   line-height: 1.7;
                 "
               >
-                Please review the reason(s) provided and re-submit your KYC
-                information with the necessary corrections. You can update your
-                details through your account dashboard.
+                You now have full access to all features and services. You can
+                start making transfers and managing your finances without any
+                restrictions related to KYC.
               </p>
 
-              {{#if kycUpdateLink}}
+              {{#if dashboardLink}}
               <div
                 style="
-                  margin: 25px 0 35px 0;
+                  /* from .cta-button-container & global reset */
                   padding: 0;
                   border: 0;
                   font-size: 100%;
@@ -276,33 +237,36 @@
                   font-family: Arial, Helvetica, sans-serif;
                   line-height: 1.6;
                   text-align: center;
+                  margin: 25px 0 35px 0;
                 "
               >
                 <a
-                  href="{{kycUpdateLink}}"  
+                  href="{{dashboardLink}}"
                   style="
+                    /* from .cta-button & global reset for a */
                     margin: 0;
-                    padding: 12.5px 24px; 
+                    padding: 12.5px 24px; /* Specific style */
                     border: 0;
-                    vertical-align: b aseline;
+                    vertical-align: baseline;
                     box-sizing: border-box;
                     font-family: Arial, Helvetica, sans-serif;
                     line-height: 1.6;
-                    display: inline-block;
-                    background-color: #66e8fa;
-                    color: #22282a !important;
-                    font-weight: 500;
-                    text-decoration: none;
-                    border-radius: 30px;
-                    font-size: 16px;
+                    display: inline-block; /* Specific style */
+                    background-color: #adfa1d; /* Specific style */
+                    color: #171717 !important; /* Spe ific style */
+                    font-weight: 500; /* Specific style */
+                    text-decoration: none; /* Specific style */
+                    border-radius: 30px; /* Specific style */
+                    font-size: 16px; /* Specific style */
                   "
-                  >Update Your KYC Information</a
+                  >Go to Dashboard</a
                 >
               </div>
               {{/if}}
 
               <p
                 style="
+                  /* from .email-body p & global reset */
                   margin: 0;
                   padding: 0;
                   border: 0;
@@ -311,16 +275,15 @@
                   font-family: Arial, Helvetica, sans-serif;
                   font-size: 16px;
                   margin-bottom: 20px;
-                  color: #394247;
+                  color: #6a7282;
                   line-height: 1.7;
                 "
               >
-                If you have any questions or need assistance, please don't
-                hesitate to contact our support team.
+                If you have any questions, feel free to contact our support
+                team.
               </p>
             </div>
 
-            <!-- Footer-Section -->
             <div
               style="
                 margin: 0;
@@ -329,7 +292,7 @@
                 box-sizing: border-box;
                 font-family: Arial, Helvetica, sans-serif;
                 line-height: 1.6;
-                background-color: #22282a;
+                background-color: #002330;
                 color: #f4f4f4;
                 text-align: center;
                 font-size: 14px;
@@ -373,7 +336,7 @@
                           box-sizing: border-box;
                           font-family: Arial, Helvetica, sans-serif;
                           line-height: 1.6;
-                          color: #66e8fa;
+                          color: #adfa1d;
                           text-decoration: none;
                           font-weight: 400;
                         "
@@ -399,7 +362,7 @@
                           box-sizing: border-box;
                           font-family: Arial, Helvetica, sans-serif;
                           line-height: 1.6;
-                          color: #66e8fa;
+                          color: #adfa1d;
                           text-decoration: none;
                           font-weight: 400;
                         "
@@ -424,7 +387,7 @@
                           box-sizing: border-box;
                           font-family: Arial, Helvetica, sans-serif;
                           line-height: 1.6;
-                          color: #66e8fa;
+                          color: #adfa1d;
                           text-decoration: none;
                           font-weight: 400;
                         "
@@ -440,7 +403,6 @@
                   </tr>
                 </table>
               </div>
-
               <p
                 style="
                   border: 0;
@@ -465,7 +427,7 @@
                     box-sizing: border-box;
                     font-family: Arial, Helvetica, sans-serif;
                     line-height: 1.6;
-                    color: #66e8fa;
+                    color: #adfa1d;
                     text-decoration: none;
                     font-weight: 400;
                     margin: 0;
@@ -497,7 +459,7 @@
                     box-sizing: border-box;
                     font-family: Arial, Helvetica, sans-serif;
                     line-height: 1.6;
-                    color: #66e8fa;
+                    color: #adfa1d;
                     text-decoration: none;
                     font-weight: 400;
                     margin: 0;
@@ -513,7 +475,7 @@
                     box-sizing: border-box;
                     font-family: Arial, Helvetica, sans-serif;
                     line-height: 1.6;
-                    color: #66e8fa;
+                    color: #adfa1d;
                   "
                   >|</span
                 >
@@ -527,7 +489,7 @@
                     box-sizing: border-box;
                     font-family: Arial, Helvetica, sans-serif;
                     line-height: 1.6;
-                    color: #66e8fa;
+                    color: #adfa1d;
                     text-decoration: none;
                     font-weight: 400;
                     margin: 0;
@@ -543,7 +505,7 @@
                     box-sizing: border-box;
                     font-family: Arial, Helvetica, sans-serif;
                     line-height: 1.6;
-                    color: #66e8fa;
+                    color: #adfa1d;
                   "
                   >|</span
                 >
@@ -557,7 +519,7 @@
                     box-sizing: border-box;
                     font-family: Arial, Helvetica, sans-serif;
                     line-height: 1.6;
-                    color: #66e8fa;
+                    color: #adfa1d;
                     text-decoration: none;
                     font-weight: 400;
                     margin: 0;
@@ -579,7 +541,7 @@
                   margin: 10px 0 0 0;
                 "
               >
-                We appreciate your cooperation.
+                Thank you for choosing {{appName}}!
               </p>
 
               <p

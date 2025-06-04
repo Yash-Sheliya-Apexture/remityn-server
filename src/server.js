@@ -857,7 +857,6 @@ app.use(helmet.xssFilter());
 app.use(helmet.noSniff());
 app.use(helmet.ieNoOpen());
 app.use(helmet.frameguard({ action: 'deny' }));
-// app.use(helmet.contentSecurityPolicy({ ... })); // Configure properly if needed
 
 const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, max: 100,
@@ -872,7 +871,7 @@ app.use(compression());
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
 }
-const allowedOrigins = [ 'http://localhost:3000', 'https://wise-lime.vercel.app' ];
+const allowedOrigins = [ 'http://localhost:3000', 'https://www.remityn.com' ];
 app.use(cors({
     origin: (origin, callback) => {
         if (!origin || allowedOrigins.includes(origin)) {

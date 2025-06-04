@@ -169,7 +169,7 @@ async function sendKycApprovedNotification(user) {
         console.error('[NotificationService] Invalid user object for KYC approved notification.', user);
         return;
     }
-    const appName = config.email.emailFromName || 'Wise App Clone';
+    const appName = config.email.emailFromName || 'Remityn';
     const dashboardLink = `${config.clientUrl}/dashboard`; // Or specific profile/kyc page
 
     // 1. In-App Message
@@ -215,7 +215,7 @@ async function sendKycRejectedNotification(user, rejectionReason = "Please revie
         console.error('[NotificationService] Invalid user object for KYC rejected notification.', user);
         return;
     }
-    const appName = config.email.emailFromName || 'Wise App Clone';
+    const appName = config.email.emailFromName || 'Remityn';
     const kycUpdateLink = `${config.clientUrl}/dashboard/kyc`; // Link to where user can resubmit KYC
 
     // 1. In-App Message

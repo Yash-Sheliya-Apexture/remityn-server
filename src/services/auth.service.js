@@ -1981,7 +1981,7 @@ const requestPasswordReset = async (email) => {
         console.log(`[Auth Service - requestPasswordReset] Reset token generated and saved for ${email}. Expires in ${tokenExpiryMinutes} minutes.`);
 
         const resetUrl = `${config.clientUrl}/auth/reset-password/${resetToken}`;
-        const appName = config.email.emailFromName || 'Wise App Clone';
+        const appName = config.email.emailFromName || 'Remityn';
 
         const templateData = {
             userName: user.fullName || 'Valued User',

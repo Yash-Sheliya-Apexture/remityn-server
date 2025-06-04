@@ -28,7 +28,7 @@ import Currency from '../models/Currency.js';
 const getAllCurrencies = async (includeRates = false) => {
     // MODIFIED: Select fee fields when includeRates is true
     const selection = 'code currencyName flagImage' +
-                      (includeRates ? ' rateAdjustmentPercentage wiseFeePercentage bankTransferFee' : ''); // Ensure these are selected
+                      (includeRates ? ' rateAdjustmentPercentage remitynFeePercentage bankTransferFee' : ''); // Ensure these are selected
     // Ensure sorting if needed, e.g., by code
     return await Currency.find().select(selection).sort({ code: 1 });
 };
