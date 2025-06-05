@@ -846,7 +846,7 @@ import { dirname } from 'path';      // Import dirname from 'path'
 import rateLimit from 'express-rate-limit'; // Import rate limiter
 import AppError from './utils/AppError.js'; // Import AppError if used in error handler
 
-dotenv.config(); // Load environment variables from .env file
+dotenv.config();
 
 const app = express();
 

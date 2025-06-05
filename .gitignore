@@ -51,3 +51,9 @@ coverage/
 .pnp/
 .pnp.js
 .parcel-cache/
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
