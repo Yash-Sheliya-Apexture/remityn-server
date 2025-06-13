@@ -410,6 +410,9 @@ import { chromium } from 'playwright';
 
 const GOOGLE_FINANCE_BASE_URL = 'https://www.google.com/finance/quote/';
 const RATE_SELECTOR = 'div[data-last-price]';
+// **KEY CHANGE**: Set a limit for how many pages to scrape at once.
+// 2 or 3 is a safe and effective number for most servers and to avoid IP blocks.
+const CONCURRENCY_LIMIT = 2;
 
 /**
  * Scrapes the rate for a single currency pair against INR.
@@ -423,28 +426,23 @@ async function scrapeSingleRate(code, context) {
     let page;
     try {
         page = await context.newPage();
-        // Use a generous timeout for navigation, as this is where network issues often appear.
         await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
 
-        // Use the robust Locator API. It auto-waits and is more reliable.
         const rateLocator = page.locator(RATE_SELECTOR).first();
         await rateLocator.waitFor({ state: 'visible', timeout: 45000 });
 
         const rateText = await rateLocator.getAttribute('data-last-price');
-
-        if (!rateText) {
-            throw new Error(`Attribute 'data-last-price' not found`);
-        }
+        if (!rateText) throw new Error(`Attribute 'data-last-price' not found`);
 
         const rate = parseFloat(rateText.replace(/,/g, ''));
-        if (isNaN(rate)) {
-            throw new Error(`Parsed value "${rateText}" is not a number`);
-        }
+        if (isNaN(rate)) throw new Error(`Parsed value "${rateText}" is not a number`);
 
-        console.log(`Scraper: SUCCESS for ${code}/INR -> ${rate}`);
+        // Log success only for clarity, not for every run.
+        // console.log(`Scraper: SUCCESS for ${code}/INR -> ${rate}`);
         return { code, rate };
+
     } catch (error) {
-        console.error(`Scraper: FAILED for ${code}/INR at ${url}: ${error.message}`);
+        console.error(`Scraper: FAILED for ${code}/INR: ${error.message}`);
         return { code, error: error.message };
     } finally {
         if (page && !page.isClosed()) {
@@ -454,7 +452,7 @@ async function scrapeSingleRate(code, context) {
 }
 
 /**
- * Main scraper function that launches a browser and runs all currency scrapes in parallel.
+ * Main scraper function that launches a browser and runs currency scrapes in controlled parallel batches.
  * @param {string[]} targetCurrencyCodes - Array of currency codes to scrape.
  * @returns {Promise<Object|null>} - An object of scraped rates or null on critical failure.
  */
@@ -465,17 +463,16 @@ async function scrapeAllRatesAgainstINR(targetCurrencyCodes) {
     }
 
     let browser;
-    const scrapedRates = {};
-    const failedScrapes = [];
+    const allResults = [];
 
-    console.log(`Scraper: Starting parallel scrape for ${targetCurrencyCodes.length} currencies...`);
+    console.log(`Scraper: Starting batched scrape for ${targetCurrencyCodes.length} currencies (Concurrency: ${CONCURRENCY_LIMIT})...`);
     try {
         browser = await chromium.launch({
             headless: true,
             args: [
                 '--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage',
                 '--disable-accelerated-2d-canvas', '--no-first-run', '--no-zygote',
-                '--single-process', '--disable-gpu'
+                '--disable-gpu', '--disable-extensions'
             ]
         });
 
@@ -484,33 +481,24 @@ async function scrapeAllRatesAgainstINR(targetCurrencyCodes) {
              ignoreHTTPSErrors: true
         });
 
-        // **KEY CHANGE**: Create an array of promises, one for each currency scrape.
-        const scrapePromises = targetCurrencyCodes.map(code => scrapeSingleRate(code, context));
+        // **KEY CHANGE**: Process the currencies in batches.
+        for (let i = 0; i < targetCurrencyCodes.length; i += CONCURRENCY_LIMIT) {
+            const batch = targetCurrencyCodes.slice(i, i + CONCURRENCY_LIMIT);
+            console.log(`Scraper: Processing batch ${i / CONCURRENCY_LIMIT + 1}: [${batch.join(', ')}]`);
 
-        // **KEY CHANGE**: Execute all promises in parallel and wait for all to finish.
-        // `allSettled` is used so that one failure doesn't stop the entire batch.
-        const results = await Promise.allSettled(scrapePromises);
+            const batchPromises = batch.map(code => scrapeSingleRate(code, context));
+            const batchResult = await Promise.allSettled(batchPromises);
+            allResults.push(...batchResult);
 
-        // Process the results
-        results.forEach(result => {
-            if (result.status === 'fulfilled') {
-                const { code, rate, error } = result.value;
-                if (error) {
-                    // This handles cases where the function resolved but with an error message
-                    failedScrapes.push(code);
-                } else {
-                    scrapedRates[code] = rate;
-                }
-            } else {
-                // This handles rejected promises, though our function is designed to always resolve.
-                // We extract the code from the rejection reason if possible, but it's tricky.
-                console.error(`Scraper: A promise was rejected unexpectedly:`, result.reason);
+            // Optional: Add a small delay between batches to be even more "polite"
+            if (i + CONCURRENCY_LIMIT < targetCurrencyCodes.length) {
+                await new Promise(resolve => setTimeout(resolve, 1000)); // 1-second delay
             }
-        });
+        }
 
     } catch (browserError) {
-        console.error('Scraper: Major error during browser setup or parallel execution:', browserError);
-        return null; // Critical failure
+        console.error('Scraper: Major error during browser setup or batch execution:', browserError);
+        return null;
     } finally {
         if (browser && browser.isConnected()) {
             console.log('Scraper: Closing Playwright browser.');
@@ -518,8 +506,25 @@ async function scrapeAllRatesAgainstINR(targetCurrencyCodes) {
         }
     }
 
+    // Process the results collected from all batches
+    const scrapedRates = {};
+    const failedScrapes = [];
+    allResults.forEach(result => {
+        if (result.status === 'fulfilled' && result.value) {
+            const { code, rate, error } = result.value;
+            if (error) {
+                failedScrapes.push(code);
+            } else {
+                scrapedRates[code] = rate;
+            }
+        } else if (result.status === 'rejected') {
+            // This case should be rare since scrapeSingleRate catches its own errors
+            console.error(`Scraper: A promise was unexpectedly rejected:`, result.reason);
+        }
+    });
+
     if (Object.keys(scrapedRates).length === 0 && targetCurrencyCodes.length > 0) {
-        console.error('Scraper: Critical failure - no rates were successfully scraped in this run.');
+        console.error('Scraper: Critical failure - no rates were successfully scraped.');
         return null;
     }
 
@@ -527,7 +532,7 @@ async function scrapeAllRatesAgainstINR(targetCurrencyCodes) {
         console.warn('Scraper: Failed to scrape rates for:', failedScrapes.join(', '));
     }
 
-    console.log(`Scraper: Finished parallel scrape. Success: ${Object.keys(scrapedRates).length}, Failed: ${failedScrapes.length}`);
+    console.log(`Scraper: Finished batched scrape. Success: ${Object.keys(scrapedRates).length}, Failed: ${failedScrapes.length}`);
     return scrapedRates;
 }
 
