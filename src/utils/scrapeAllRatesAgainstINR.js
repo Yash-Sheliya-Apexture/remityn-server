@@ -284,6 +284,127 @@
 
 
 
+// // backend/src/utils/scrapeAllRatesAgainstINR.js
+// import { chromium } from 'playwright';
+
+// const GOOGLE_FINANCE_BASE_URL = 'https://www.google.com/finance/quote/';
+// const RATE_SELECTOR = 'div[data-last-price]';
+
+// async function scrapeAllRatesAgainstINR(targetCurrencyCodes) {
+//     if (!targetCurrencyCodes || targetCurrencyCodes.length === 0) {
+//         console.log('Scraper: No target currency codes provided.');
+//         return {};
+//     }
+
+//     let browser;
+//     let context;
+//     const scrapedRates = {};
+//     const failedScrapes = [];
+
+//     console.log('Scraper: Starting Playwright browser (Chromium)...');
+//     try {
+//         browser = await chromium.launch({
+//             headless: true,
+//             // --- CRITICAL LAUNCH ARGUMENTS FOR LINUX SERVER/EC2 ---
+//             args: [
+//                 '--no-sandbox',                // Required for running as root/in a containerized env
+//                 '--disable-setuid-sandbox',    // Disables the setuid sandbox (often needed)
+//                 '--disable-dev-shm-usage',     // Prevents issues with small /dev/shm size
+//                 '--disable-accelerated-2d-canvas',
+//                 '--no-first-run',
+//                 '--no-zygote',
+//                 '--single-process',            // Use a single process (helps in low-memory envs)
+//                 '--disable-gpu'                // Disable GPU hardware acceleration
+//             ]
+//         });
+
+//         context = await browser.newContext({
+//              userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36',
+//              // Ignore HTTPS errors which can sometimes occur on servers
+//              ignoreHTTPSErrors: true
+//         });
+
+//         for (const code of targetCurrencyCodes) {
+//             // Check if browser is still connected before processing next currency
+//             if (!browser.isConnected()) {
+//                 console.error(`Scraper: Browser disconnected before scraping ${code}. Aborting loop.`);
+//                 // Add all remaining codes to failedScrapes
+//                 const currentIndex = targetCurrencyCodes.indexOf(code);
+//                 failedScrapes.push(...targetCurrencyCodes.slice(currentIndex));
+//                 break; // Exit the loop
+//             }
+
+//             const url = `${GOOGLE_FINANCE_BASE_URL}${code}-INR`;
+//             console.log(`Scraper: Navigating to ${url}`);
+
+//             let page;
+//             try {
+//                 page = await context.newPage();
+//                 // Increased timeout and changed wait condition for more reliability
+//                 await page.goto(url, { waitUntil: 'networkidle', timeout: 45000 });
+//                 await page.waitForSelector(RATE_SELECTOR, { state: 'visible', timeout: 20000 });
+
+//                 const rateText = await page.evaluate((selector) => {
+//                     const el = document.querySelector(selector);
+//                     return el ? (el.getAttribute('data-last-price') || el.textContent.trim()) : null;
+//                 }, RATE_SELECTOR);
+
+//                 if (rateText === null) {
+//                      console.warn(`Scraper: Selector ${RATE_SELECTOR} not found for ${code}-INR.`);
+//                      failedScrapes.push(code);
+//                      continue;
+//                 }
+                
+//                 // Handle numbers with commas
+//                 const rate = parseFloat(rateText.replace(/,/g, ''));
+
+//                 if (isNaN(rate)) {
+//                     console.warn(`Scraper: Extracted value "${rateText}" for ${code}-INR is not a number.`);
+//                     failedScrapes.push(code);
+//                 } else {
+//                     scrapedRates[code] = rate;
+//                     console.log(`Scraper: Scraped ${code}/INR rate: ${rate}`);
+//                 }
+//             } catch (error) {
+//                 console.error(`Scraper: Error scraping ${code}/INR from ${url}:`, error.message);
+//                 failedScrapes.push(code);
+//             } finally {
+//                 if (page && !page.isClosed()) {
+//                     await page.close();
+//                 }
+//             }
+//         }
+
+//     } catch (browserError) {
+//         console.error('Scraper: Major error during browser setup or main loop:', browserError);
+//         return null;
+//     } finally {
+//         // --- DEFENSIVE CLEANUP ---
+//         // This ensures that we attempt to close everything, even if one part has already crashed.
+//         if (browser && browser.isConnected()) {
+//             console.log('Scraper: Closing Playwright browser.');
+//             await browser.close();
+//         } else {
+//             console.log('Scraper: Browser was not connected or already closed.');
+//         }
+//     }
+    
+//     if (Object.keys(scrapedRates).length === 0 && targetCurrencyCodes.length > 0) {
+//         console.error('Scraper: Critical failure - no rates were successfully scraped.');
+//         return null;
+//     }
+
+//     if (failedScrapes.length > 0) {
+//         console.warn('Scraper: Failed to scrape rates for:', failedScrapes.join(', '));
+//     }
+
+//     console.log('Scraper: Returning scraped rates object:', scrapedRates);
+//     return scrapedRates;
+// }
+
+// export default scrapeAllRatesAgainstINR;
+
+
 // backend/src/utils/scrapeAllRatesAgainstINR.js
 import { chromium } from 'playwright';
 
@@ -305,33 +426,29 @@ async function scrapeAllRatesAgainstINR(targetCurrencyCodes) {
     try {
         browser = await chromium.launch({
             headless: true,
-            // --- CRITICAL LAUNCH ARGUMENTS FOR LINUX SERVER/EC2 ---
             args: [
-                '--no-sandbox',                // Required for running as root/in a containerized env
-                '--disable-setuid-sandbox',    // Disables the setuid sandbox (often needed)
-                '--disable-dev-shm-usage',     // Prevents issues with small /dev/shm size
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
                 '--disable-accelerated-2d-canvas',
                 '--no-first-run',
                 '--no-zygote',
-                '--single-process',            // Use a single process (helps in low-memory envs)
-                '--disable-gpu'                // Disable GPU hardware acceleration
+                '--single-process',
+                '--disable-gpu'
             ]
         });
 
         context = await browser.newContext({
              userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36',
-             // Ignore HTTPS errors which can sometimes occur on servers
              ignoreHTTPSErrors: true
         });
 
         for (const code of targetCurrencyCodes) {
-            // Check if browser is still connected before processing next currency
             if (!browser.isConnected()) {
-                console.error(`Scraper: Browser disconnected before scraping ${code}. Aborting loop.`);
-                // Add all remaining codes to failedScrapes
+                console.error(`Scraper: Browser disconnected before scraping ${code}. Aborting.`);
                 const currentIndex = targetCurrencyCodes.indexOf(code);
                 failedScrapes.push(...targetCurrencyCodes.slice(currentIndex));
-                break; // Exit the loop
+                break;
             }
 
             const url = `${GOOGLE_FINANCE_BASE_URL}${code}-INR`;
@@ -340,22 +457,21 @@ async function scrapeAllRatesAgainstINR(targetCurrencyCodes) {
             let page;
             try {
                 page = await context.newPage();
-                // Increased timeout and changed wait condition for more reliability
-                await page.goto(url, { waitUntil: 'networkidle', timeout: 45000 });
-                await page.waitForSelector(RATE_SELECTOR, { state: 'visible', timeout: 20000 });
+                // Use 'domcontentloaded' for faster initial load, with a generous timeout.
+                await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
 
-                const rateText = await page.evaluate((selector) => {
-                    const el = document.querySelector(selector);
-                    return el ? (el.getAttribute('data-last-price') || el.textContent.trim()) : null;
-                }, RATE_SELECTOR);
+                // **KEY CHANGE**: Use the robust Locator API with a long timeout.
+                const rateLocator = page.locator(RATE_SELECTOR).first();
+                await rateLocator.waitFor({ state: 'visible', timeout: 45000 });
 
-                if (rateText === null) {
-                     console.warn(`Scraper: Selector ${RATE_SELECTOR} not found for ${code}-INR.`);
+                const rateText = await rateLocator.getAttribute('data-last-price');
+
+                if (!rateText) {
+                     console.warn(`Scraper: Attribute 'data-last-price' not found for ${code}-INR.`);
                      failedScrapes.push(code);
                      continue;
                 }
-                
-                // Handle numbers with commas
+
                 const rate = parseFloat(rateText.replace(/,/g, ''));
 
                 if (isNaN(rate)) {
@@ -367,11 +483,17 @@ async function scrapeAllRatesAgainstINR(targetCurrencyCodes) {
                 }
             } catch (error) {
                 console.error(`Scraper: Error scraping ${code}/INR from ${url}:`, error.message);
+                if (error.name === 'TimeoutError') {
+                    console.error(`Scraper: The operation timed out. This could be due to network issues, a slow server, or bot detection (e.g., CAPTCHA).`);
+                }
                 failedScrapes.push(code);
             } finally {
                 if (page && !page.isClosed()) {
                     await page.close();
                 }
+                // **KEY CHANGE**: Add a small, random delay to appear less robotic.
+                const delay = Math.floor(Math.random() * 2500) + 1000; // 1 to 3.5 seconds
+                await new Promise(resolve => setTimeout(resolve, delay));
             }
         }
 
@@ -379,18 +501,14 @@ async function scrapeAllRatesAgainstINR(targetCurrencyCodes) {
         console.error('Scraper: Major error during browser setup or main loop:', browserError);
         return null;
     } finally {
-        // --- DEFENSIVE CLEANUP ---
-        // This ensures that we attempt to close everything, even if one part has already crashed.
         if (browser && browser.isConnected()) {
             console.log('Scraper: Closing Playwright browser.');
             await browser.close();
-        } else {
-            console.log('Scraper: Browser was not connected or already closed.');
         }
     }
-    
+
     if (Object.keys(scrapedRates).length === 0 && targetCurrencyCodes.length > 0) {
-        console.error('Scraper: Critical failure - no rates were successfully scraped.');
+        console.error('Scraper: Critical failure - no rates were successfully scraped in this run.');
         return null;
     }
 
@@ -403,7 +521,6 @@ async function scrapeAllRatesAgainstINR(targetCurrencyCodes) {
 }
 
 export default scrapeAllRatesAgainstINR;
-
 
 
 // // backend/src/utils/scrapeAllRatesAgainstINR.js
