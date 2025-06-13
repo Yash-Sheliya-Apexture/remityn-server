@@ -110,7 +110,7 @@ const emailConfig = {
     emailUser: process.env.EMAIL_USER,
     adminEmail: process.env.ADMIN_EMAIL,
     clientURL: process.env.CLIENT_URL || 'http://localhost:3000',
-    emailFromName: process.env.EMAIL_FROM_NAME || 'Wise Clone',
+    emailFromName: process.env.EMAIL_FROM_NAME || 'Remityn',
 };
 
 // --- Cloudinary Config ---
