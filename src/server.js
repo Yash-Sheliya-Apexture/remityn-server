@@ -1244,7 +1244,7 @@ const authLimiter = rateLimit({
     legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
 app.use('/api/auth/login', authLimiter);
-app.use('/api/auth/register', authLimiter); // Also consider for registration
+app.use('/api/auth/register', authLimiter);
 
 // --- Core Middleware ---
 app.use(compression()); // Compress responses
@@ -1253,30 +1253,29 @@ app.use(compression()); // Compress responses
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
 } else if (process.env.NODE_ENV === 'production') {
-    app.use(morgan('combined')); // More detailed logging for production
+    app.use(morgan('combined'));
 }
 
 
 // CORS Configuration
-const defaultAllowedOrigins = 'http://localhost:3000,https://www.remityn.com'; // Default for local dev and one prod domain
+const defaultAllowedOrigins = 'http://localhost:3000,https://www.remityn.com';
 const allowedOriginsEnv = process.env.ALLOWED_ORIGINS || defaultAllowedOrigins;
-const allowedOrigins = allowedOriginsEnv.split(',').map(origin => origin.trim()).filter(origin => origin); // Filter out empty strings if any
+const allowedOrigins = allowedOriginsEnv.split(',').map(origin => origin.trim()).filter(origin => origin);
 
 if (allowedOrigins.length > 0) {
-    console.log("Allowed CORS Origins:", allowedOrigins); // For debugging startup
+    console.log("Allowed CORS Origins:", allowedOrigins);
 } else {
     console.warn("Warning: No CORS origins configured. This might block frontend access.");
 }
 
 app.use(cors({
     origin: (origin, callback) => {
-        // Allow requests with no origin (like mobile apps or curl requests)
         if (!origin) return callback(null, true);
 
         if (allowedOrigins.length === 0 || allowedOrigins.includes(origin) || (process.env.NODE_ENV === 'development' && origin.startsWith('http://localhost:'))) {
             callback(null, true);
         } else {
-            console.error(`CORS Error: Origin ${origin} not allowed.`); // Log denied origins
+            console.error(`CORS Error: Origin ${origin} not allowed.`);
             callback(new AppError(`The CORS policy for this site does not allow access from the specified Origin: ${origin}`, 403));
         }
     },
@@ -1286,7 +1285,7 @@ app.use(cors({
 }));
 
 app.use(cookieParser());
-app.use(express.json({ limit: '10kb' })); // Limit request body size
+app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
 // Cache-Control for development
@@ -1313,7 +1312,7 @@ app.use(express.static(publicPath));
 
 // --- Health Check & Root ---
 app.get('/health', (req, res) => res.status(200).send('OK'));
-app.get('/', (req, res) => res.send('Welcome to the Remityn API server!')); // Updated welcome message
+app.get('/', (req, res) => res.send('Welcome to the Remityn API server!'));
 
 // --- API Routes ---
 app.use('/api/auth', authRoutes);
@@ -1339,8 +1338,8 @@ app.use('/api/admin/stats', ...protectAdmin, adminStatsRoutes);
 app.use('/api/admin/activity', ...protectAdmin, adminActivityRoutes);
 
 // --- Exchange Rate Watcher (using a safe setTimeout chain) ---
-// Increased default interval to 5 minutes for stability. Override with env variable if needed.
-const SCRAPE_INTERVAL_MS = process.env.EXCHANGE_RATE_SCRAPE_INTERVAL_MS || 5 * 60 * 1000;
+// **KEY CHANGE**: Reduced interval to 2 minutes now that scraping is parallel and fast.
+const SCRAPE_INTERVAL_MS = process.env.EXCHANGE_RATE_SCRAPE_INTERVAL_MS || 2 * 60 * 1000;
 
 async function exchangeRateTask() {
     console.log(`[${new Date().toISOString()}] Running exchange rate task...`);
@@ -1354,7 +1353,6 @@ async function exchangeRateTask() {
     } catch (error) {
          console.error(`[${new Date().toISOString()}] Exchange rate task failed:`, error.message, error.stack);
     } finally {
-        // **KEY CHANGE**: Schedule the next run ONLY after the current one is finished.
         if (process.env.NODE_ENV !== 'test') {
             console.log(`Scheduling next exchange rate task in ${SCRAPE_INTERVAL_MS / 1000} seconds.`);
             setTimeout(exchangeRateTask, parseInt(SCRAPE_INTERVAL_MS, 10));
@@ -1362,25 +1360,21 @@ async function exchangeRateTask() {
     }
 }
 
-// Start the watcher only once if not in a test environment.
-// It will then schedule itself to run periodically.
 if (process.env.NODE_ENV !== 'test') {
     console.log('Initiating the first run of the exchange rate task after a 5-second delay.');
-    // Start after a brief delay to allow the server to fully initialize.
     setTimeout(exchangeRateTask, 5000);
 }
 
 
 // --- Global Error Handling Middleware ---
-// Handle 404 errors - This should be after all routes
 app.all('*', (req, res, next) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 
-app.use(errorHandler); // Your custom error handler
+app.use(errorHandler);
 
 // --- Server Startup ---
-const PORT = config.port || 5000; // Use port from config, fallback to 5000
+const PORT = config.port || 5000;
 app.listen(PORT, () => {
     console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
     console.log(`API available at http://localhost:${PORT}`);
@@ -1389,4 +1383,4 @@ app.listen(PORT, () => {
     }
 });
 
-export default app; // Export app for testing purposes if needed
+export default app;

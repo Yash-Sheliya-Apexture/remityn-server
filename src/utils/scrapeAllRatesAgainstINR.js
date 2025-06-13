@@ -411,6 +411,53 @@ import { chromium } from 'playwright';
 const GOOGLE_FINANCE_BASE_URL = 'https://www.google.com/finance/quote/';
 const RATE_SELECTOR = 'div[data-last-price]';
 
+/**
+ * Scrapes the rate for a single currency pair against INR.
+ * This function is designed to be run in parallel.
+ * @param {string} code - The currency code (e.g., 'USD').
+ * @param {import('playwright').BrowserContext} context - The Playwright browser context to use.
+ * @returns {Promise<{code: string, rate: number}|{code: string, error: string}>}
+ */
+async function scrapeSingleRate(code, context) {
+    const url = `${GOOGLE_FINANCE_BASE_URL}${code}-INR`;
+    let page;
+    try {
+        page = await context.newPage();
+        // Use a generous timeout for navigation, as this is where network issues often appear.
+        await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
+
+        // Use the robust Locator API. It auto-waits and is more reliable.
+        const rateLocator = page.locator(RATE_SELECTOR).first();
+        await rateLocator.waitFor({ state: 'visible', timeout: 45000 });
+
+        const rateText = await rateLocator.getAttribute('data-last-price');
+
+        if (!rateText) {
+            throw new Error(`Attribute 'data-last-price' not found`);
+        }
+
+        const rate = parseFloat(rateText.replace(/,/g, ''));
+        if (isNaN(rate)) {
+            throw new Error(`Parsed value "${rateText}" is not a number`);
+        }
+
+        console.log(`Scraper: SUCCESS for ${code}/INR -> ${rate}`);
+        return { code, rate };
+    } catch (error) {
+        console.error(`Scraper: FAILED for ${code}/INR at ${url}: ${error.message}`);
+        return { code, error: error.message };
+    } finally {
+        if (page && !page.isClosed()) {
+            await page.close();
+        }
+    }
+}
+
+/**
+ * Main scraper function that launches a browser and runs all currency scrapes in parallel.
+ * @param {string[]} targetCurrencyCodes - Array of currency codes to scrape.
+ * @returns {Promise<Object|null>} - An object of scraped rates or null on critical failure.
+ */
 async function scrapeAllRatesAgainstINR(targetCurrencyCodes) {
     if (!targetCurrencyCodes || targetCurrencyCodes.length === 0) {
         console.log('Scraper: No target currency codes provided.');
@@ -418,88 +465,52 @@ async function scrapeAllRatesAgainstINR(targetCurrencyCodes) {
     }
 
     let browser;
-    let context;
     const scrapedRates = {};
     const failedScrapes = [];
 
-    console.log('Scraper: Starting Playwright browser (Chromium)...');
+    console.log(`Scraper: Starting parallel scrape for ${targetCurrencyCodes.length} currencies...`);
     try {
         browser = await chromium.launch({
             headless: true,
             args: [
-                '--no-sandbox',
-                '--disable-setuid-sandbox',
-                '--disable-dev-shm-usage',
-                '--disable-accelerated-2d-canvas',
-                '--no-first-run',
-                '--no-zygote',
-                '--single-process',
-                '--disable-gpu'
+                '--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage',
+                '--disable-accelerated-2d-canvas', '--no-first-run', '--no-zygote',
+                '--single-process', '--disable-gpu'
             ]
         });
 
-        context = await browser.newContext({
+        const context = await browser.newContext({
              userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36',
              ignoreHTTPSErrors: true
         });
 
-        for (const code of targetCurrencyCodes) {
-            if (!browser.isConnected()) {
-                console.error(`Scraper: Browser disconnected before scraping ${code}. Aborting.`);
-                const currentIndex = targetCurrencyCodes.indexOf(code);
-                failedScrapes.push(...targetCurrencyCodes.slice(currentIndex));
-                break;
-            }
+        // **KEY CHANGE**: Create an array of promises, one for each currency scrape.
+        const scrapePromises = targetCurrencyCodes.map(code => scrapeSingleRate(code, context));
 
-            const url = `${GOOGLE_FINANCE_BASE_URL}${code}-INR`;
-            console.log(`Scraper: Navigating to ${url}`);
+        // **KEY CHANGE**: Execute all promises in parallel and wait for all to finish.
+        // `allSettled` is used so that one failure doesn't stop the entire batch.
+        const results = await Promise.allSettled(scrapePromises);
 
-            let page;
-            try {
-                page = await context.newPage();
-                // Use 'domcontentloaded' for faster initial load, with a generous timeout.
-                await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
-
-                // **KEY CHANGE**: Use the robust Locator API with a long timeout.
-                const rateLocator = page.locator(RATE_SELECTOR).first();
-                await rateLocator.waitFor({ state: 'visible', timeout: 45000 });
-
-                const rateText = await rateLocator.getAttribute('data-last-price');
-
-                if (!rateText) {
-                     console.warn(`Scraper: Attribute 'data-last-price' not found for ${code}-INR.`);
-                     failedScrapes.push(code);
-                     continue;
-                }
-
-                const rate = parseFloat(rateText.replace(/,/g, ''));
-
-                if (isNaN(rate)) {
-                    console.warn(`Scraper: Extracted value "${rateText}" for ${code}-INR is not a number.`);
+        // Process the results
+        results.forEach(result => {
+            if (result.status === 'fulfilled') {
+                const { code, rate, error } = result.value;
+                if (error) {
+                    // This handles cases where the function resolved but with an error message
                     failedScrapes.push(code);
                 } else {
                     scrapedRates[code] = rate;
-                    console.log(`Scraper: Scraped ${code}/INR rate: ${rate}`);
                 }
-            } catch (error) {
-                console.error(`Scraper: Error scraping ${code}/INR from ${url}:`, error.message);
-                if (error.name === 'TimeoutError') {
-                    console.error(`Scraper: The operation timed out. This could be due to network issues, a slow server, or bot detection (e.g., CAPTCHA).`);
-                }
-                failedScrapes.push(code);
-            } finally {
-                if (page && !page.isClosed()) {
-                    await page.close();
-                }
-                // **KEY CHANGE**: Add a small, random delay to appear less robotic.
-                const delay = Math.floor(Math.random() * 2500) + 1000; // 1 to 3.5 seconds
-                await new Promise(resolve => setTimeout(resolve, delay));
+            } else {
+                // This handles rejected promises, though our function is designed to always resolve.
+                // We extract the code from the rejection reason if possible, but it's tricky.
+                console.error(`Scraper: A promise was rejected unexpectedly:`, result.reason);
             }
-        }
+        });
 
     } catch (browserError) {
-        console.error('Scraper: Major error during browser setup or main loop:', browserError);
-        return null;
+        console.error('Scraper: Major error during browser setup or parallel execution:', browserError);
+        return null; // Critical failure
     } finally {
         if (browser && browser.isConnected()) {
             console.log('Scraper: Closing Playwright browser.');
@@ -516,7 +527,7 @@ async function scrapeAllRatesAgainstINR(targetCurrencyCodes) {
         console.warn('Scraper: Failed to scrape rates for:', failedScrapes.join(', '));
     }
 
-    console.log('Scraper: Returning scraped rates object:', scrapedRates);
+    console.log(`Scraper: Finished parallel scrape. Success: ${Object.keys(scrapedRates).length}, Failed: ${failedScrapes.length}`);
     return scrapedRates;
 }
 
