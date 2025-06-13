@@ -1009,9 +1009,11 @@ import { dirname } from 'path';      // Import dirname from 'path'
 import rateLimit from 'express-rate-limit'; // Import rate limiter
 import AppError from './utils/AppError.js'; // Import AppError if used in error handler
 
-dotenv.config(); // Load environment variables early
+dotenv.config();
 
 const app = express();
+
+app.set('trust proxy', 1); 
 
 // --- Security Middleware ---
 app.use(helmet.crossOriginOpenerPolicy({ policy: "same-origin-allow-popups" }));
