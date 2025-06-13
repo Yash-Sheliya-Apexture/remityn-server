@@ -1840,7 +1840,368 @@
 // };
 
 
-// backend/src/services/auth.service.js
+// // backend/src/services/auth.service.js
+// import User from '../models/User.js';
+// import bcrypt from 'bcryptjs';
+// import jwt from 'jsonwebtoken';
+// import config from '../config/index.js';
+// import mongoose from 'mongoose';
+// import { OAuth2Client } from 'google-auth-library';
+// import notificationService from './notification.service.js';
+// import emailService from '../utils/emailService.js';
+
+// // --- Register User ---
+// const registerUser = async (fullName, email, password) => {
+//     console.log(`[Auth Service - registerUser] Attempting registration for email: ${email}`);
+//     try {
+//         // Select google flags during lookup
+//         const existingUser = await User.findOne({ email }).select('+isGoogleAccount +googleId');
+//         if (existingUser) {
+//             console.log(`[Auth Service - registerUser] Registration failed: Email ${email} already exists.`);
+//             if (existingUser.isGoogleAccount || existingUser.googleId) {
+//                 throw new Error('This email is associated with a Google account. Please log in with Google, or use "Forgot Password" to set/reset a password for email login.');
+//             }
+//             throw new Error('Email already exists.');
+//         }
+
+//         const newUser = new User({ fullName, email, password });
+//         await newUser.save(); // Mongoose `isNew` is true before this, false after.
+//         console.log(`[Auth Service - registerUser] User ${email} registered successfully with ID: ${newUser._id}.`);
+
+//         // --- Send Welcome Notification ---
+//         try {
+//             console.log(`[Auth Service - registerUser] Attempting to send welcome notification to ${newUser.email}`);
+//             await notificationService.sendWelcomeNotification(newUser); // Pass the Mongoose user document
+//         } catch (notificationError) {
+//             console.error(`[Auth Service - registerUser] Non-critical error sending welcome notification for ${newUser.email}:`, notificationError);
+//         }
+//         // --- End Send Welcome Notification ---
+
+//         const userPayload = {
+//             _id: newUser._id,
+//             email: newUser.email,
+//             fullName: newUser.fullName,
+//             role: newUser.role,
+//             kyc: { status: newUser.kyc?.status || 'not_started', rejectionReason: newUser.kyc?.rejectionReason || null, },
+//             createdAt: newUser.createdAt,
+//             updatedAt: newUser.updatedAt,
+//             isGoogleAccount: newUser.isGoogleAccount
+//         };
+//         return userPayload;
+//     } catch (error) {
+//         console.error("[Auth Service - registerUser] Error during registration:", error.message);
+//         if (error.message === 'Email already exists.' || error.message.includes('Google account')) {
+//             throw error; // Re-throw specific errors
+//         }
+//         throw new Error('Registration failed. Please check your input and try again.');
+//     }
+// };
+
+// // --- Login User ---
+// const loginUser = async (email, password) => {
+//     console.log(`[Auth Service - loginUser] Attempting login for email: ${email}`);
+//     try {
+//         const user = await User.findOne({ email })
+//                                .select('+password +kyc +createdAt +updatedAt +isGoogleAccount +googleId');
+
+//         if (!user) {
+//             console.log(`[Auth Service - loginUser] User not found for email: ${email}`);
+//             throw new Error('Invalid credentials');
+//         }
+
+//         console.log(`[Auth Service - loginUser] User found: ${user.email}`);
+
+//         if (!user.password) {
+//              console.log(`[Auth Service - loginUser] Password not set for user: ${email}. Likely a Google account without a password.`);
+//              throw new Error('Invalid credentials');
+//         }
+
+//         console.log(`[Auth Service - loginUser] Comparing provided password with stored hash for ${email}...`);
+//         const passwordMatch = await bcrypt.compare(password, user.password);
+//         console.log(`[Auth Service - loginUser] bcrypt.compare result for ${email}: ${passwordMatch}`);
+
+//         if (!passwordMatch) {
+//             console.log(`[Auth Service - loginUser] Password comparison FAILED for ${email}`);
+//             throw new Error('Invalid credentials');
+//         }
+
+//         console.log(`[Auth Service - loginUser] Password comparison SUCCEEDED for ${email}`);
+
+//         if (!user.kyc) { user.kyc = { status: 'not_started', rejectionReason: null }; }
+
+//         const userPayload = {
+//             _id: user._id.toString(), email: user.email, fullName: user.fullName, role: user.role,
+//             kyc: { status: user.kyc.status, rejectionReason: user.kyc.rejectionReason, },
+//             createdAt: user.createdAt.toISOString(), updatedAt: user.updatedAt.toISOString(),
+//             isGoogleAccount: user.isGoogleAccount
+//          };
+
+//         const token = jwt.sign(
+//             { userId: user._id, role: user.role },
+//             config.auth.jwtSecret,
+//             { expiresIn: config.auth.jwtExpiration }
+//         );
+
+//         console.log(`[Auth Service - loginUser] Login successful, token generated for ${email}. KYC Status: ${userPayload.kyc.status}`);
+//         return { user: userPayload, token };
+
+//     } catch (error) {
+//         console.error(`[Auth Service - loginUser] Error during login process for ${email}:`, error.message);
+//         if (error.message === 'Invalid credentials' || error.message.includes('Authentication process failed')) {
+//             throw error;
+//         }
+//         throw new Error('Login failed due to a server error.');
+//     }
+// };
+
+// // --- Request Password Reset ---
+// const requestPasswordReset = async (email) => {
+//     console.log(`[Auth Service - requestPasswordReset] Request received for email: ${email}`);
+//     try {
+//         const user = await User.findOne({ email }).select('+fullName +isGoogleAccount +googleId +resetPasswordToken +resetPasswordExpires');
+//         if (!user) {
+//             console.log(`[Auth Service - requestPasswordReset] Non-existent email: ${email}. Responding silently.`);
+//             return; // Respond silently
+//         }
+
+//         if (user.resetPasswordToken && user.resetPasswordExpires && user.resetPasswordExpires > Date.now()) {
+//             console.log(`[Auth Service - requestPasswordReset] Active reset token already exists for ${email}. Denying silently.`);
+//             return; // Respond silently
+//         }
+
+//         const resetToken = Date.now().toString(36) + Math.random().toString(36).substring(2);
+//         const hashedResetToken = bcrypt.hashSync(resetToken, 10);
+//         const tokenExpiryMinutes = 30;
+//         const tokenExpiryMilliseconds = tokenExpiryMinutes * 60 * 1000;
+
+//         user.resetPasswordToken = hashedResetToken;
+//         user.resetPasswordExpires = Date.now() + tokenExpiryMilliseconds;
+
+//         await user.save({ validateBeforeSave: false });
+//         console.log(`[Auth Service - requestPasswordReset] Reset token generated and saved for ${email}. Expires in ${tokenExpiryMinutes} minutes.`);
+
+//         const resetUrl = `${config.clientUrl}/auth/reset-password/${resetToken}`;
+//         const appName = config.email.emailFromName || 'Remityn';
+
+//         const templateData = {
+//             userName: user.fullName || 'Valued User',
+//             userEmail: user.email,
+//             resetUrl: resetUrl,
+//             appName: appName,
+//             resetLinkExpiryMinutes: tokenExpiryMinutes.toString(),
+//             currentYear: new Date().getFullYear().toString(),
+//         };
+
+//         const htmlContent = await emailService.renderTemplate('requestPasswordReset', templateData);
+
+//         const textContent = `Hello ${user.fullName || 'Valued User'},\n\n` +
+//                             `We received a request to reset the password for your account (${user.email}) on ${appName}.\n\n` +
+//                             `If you made this request, please use the following link to reset your password. This link is valid for ${tokenExpiryMinutes} minutes:\n` +
+//                             `${resetUrl}\n\n` +
+//                             `If you did not request a password reset, please ignore this email.\n\n` +
+//                             `Thank you,\nThe ${appName} Team`;
+
+//         await emailService.sendEmail({
+//             to: email,
+//             subject: `Password Reset Request for ${appName}`,
+//             html: htmlContent,
+//             text: textContent,
+//         });
+//         console.log(`[Auth Service - requestPasswordReset] Password reset email dispatch attempted for ${email} using 'requestPasswordReset' template.`);
+
+//     } catch (error) {
+//         console.error('[Auth Service - requestPasswordReset] Error processing password reset request:', error);
+//         // Respond silently
+//     }
+// };
+
+// // --- Reset Password ---
+// const resetPassword = async (token, password) => {
+//     console.log(`[Auth Service - resetPassword] Attempting password reset with token.`);
+//     if (!token || !password) {
+//          throw new Error('Token and new password are required.');
+//     }
+//     try {
+//         const potentialUsers = await User.find({
+//             resetPasswordToken: { $exists: true, $ne: null },
+//             resetPasswordExpires: { $gt: Date.now() },
+//         }).select('+password +resetPasswordToken +isGoogleAccount +googleId');
+
+//         let user = null;
+//         for (const potentialUser of potentialUsers) {
+//              if (potentialUser.resetPasswordToken && bcrypt.compareSync(token, potentialUser.resetPasswordToken)) {
+//                  user = potentialUser;
+//                  break;
+//              }
+//         }
+
+//         if (!user) {
+//             console.warn(`[Auth Service - resetPassword] Invalid or expired password reset attempt (token mismatch or expired).`);
+//             throw new Error('Invalid or expired password reset token.');
+//         }
+
+//         console.log(`[Auth Service - resetPassword] Valid reset token found for user ${user.email}. Updating password.`);
+//         user.password = password;
+//         user.resetPasswordToken = undefined;
+//         user.resetPasswordExpires = undefined;
+//         await user.save();
+
+//         console.log(`[Auth Service - resetPassword] Password successfully reset for user: ${user.email}`);
+//     } catch (error) {
+//         console.error('[Auth Service - resetPassword] Password reset error:', error.message);
+//         if (error.message.includes('Invalid or expired')) {
+//             throw error;
+//         }
+//         if (error.name === 'ValidationError') {
+//             const messages = Object.values(error.errors).map(el => el.message);
+//             throw new Error(`Password update failed due to validation issues: ${messages.join(', ')}`);
+//         }
+//         throw new Error('Password reset failed. Please request a new reset link.');
+//     }
+// };
+
+// // --- Google OAuth Login ---
+// const googleOAuthLogin = async (idToken) => {
+//     console.log("[Auth Service - googleOAuthLogin] Verifying Google ID token.");
+//     const client = new OAuth2Client(config.googleAuth.clientId);
+//     let ticket;
+//     try {
+//         ticket = await client.verifyIdToken({
+//             idToken: idToken,
+//             audience: config.googleAuth.clientId,
+//         });
+//         const payload = ticket.getPayload();
+
+//         if (!payload) { throw new Error('Invalid Google ID token payload.'); }
+//         if (!payload.email_verified) { throw new Error('Google account email not verified.'); }
+
+//         const { sub: googleId, email, name: fullName, picture: googleProfilePicture } = payload;
+//         console.log(`[Auth Service - googleOAuthLogin] Google token verified for email: ${email}`);
+
+//         let user = await User.findOne({ googleId: googleId })
+//                              .select('+kyc +createdAt +updatedAt +isGoogleAccount +googleId');
+
+//         let isNewUserCreatedInThisFlow = false;
+
+//         if (!user) {
+//             console.log(`[Auth Service - googleOAuthLogin] No user found with googleId ${googleId}. Checking by email: ${email}`);
+//             user = await User.findOne({ email: email })
+//                              .select('+kyc +createdAt +updatedAt +isGoogleAccount +googleId +password');
+
+//             if (user) {
+//                 console.log(`[Auth Service - googleOAuthLogin] Existing user found by email ${email}. Linking Google ID.`);
+//                  if (!user.isGoogleAccount && !user.googleId) {
+//                      console.log(`[Auth Service - googleOAuthLogin] Linking Google ID ${googleId} to existing non-Google user ${email}.`);
+//                      user.googleId = googleId;
+//                      user.isGoogleAccount = true;
+//                      user.googleProfilePicture = googleProfilePicture;
+//                      await user.save();
+//                  } else if (user.googleId && user.googleId !== googleId) {
+//                      console.error(`[Auth Service - googleOAuthLogin] CRITICAL: Email ${email} exists but with different Google ID! Existing: ${user.googleId}, New: ${googleId}`);
+//                      throw new Error('Account conflict. Please contact support.');
+//                  }
+//                  if (!user.isGoogleAccount) {
+//                      user.isGoogleAccount = true;
+//                      await user.save();
+//                  }
+//             } else {
+//                 console.log(`[Auth Service - googleOAuthLogin] No user found by email. Creating new Google user for ${email}`);
+//                 user = new User({
+//                     googleId: googleId,
+//                     email: email,
+//                     fullName: fullName,
+//                     isGoogleAccount: true,
+//                     googleProfilePicture: googleProfilePicture,
+//                 });
+//                 await user.save();
+//                 isNewUserCreatedInThisFlow = true;
+//                 console.log(`[Auth Service - googleOAuthLogin] New Google user ${email} created successfully with ID: ${user._id}.`);
+//             }
+//         } else {
+//              console.log(`[Auth Service - googleOAuthLogin] Existing Google user found by googleId ${googleId} for email ${email}.`);
+//              let profileNeedsUpdate = false;
+//              if (user.fullName !== fullName) { user.fullName = fullName; profileNeedsUpdate = true; }
+//              if (user.googleProfilePicture !== googleProfilePicture) { user.googleProfilePicture = googleProfilePicture; profileNeedsUpdate = true; }
+//              if (!user.isGoogleAccount) { user.isGoogleAccount = true; profileNeedsUpdate = true; }
+//              if (profileNeedsUpdate) {
+//                  await user.save();
+//                  console.log(`[Auth Service - googleOAuthLogin] Updated profile info for ${email}.`);
+//              }
+//         }
+
+//         if (isNewUserCreatedInThisFlow && user) {
+//             try {
+//                 console.log(`[Auth Service - googleOAuthLogin] Attempting to send welcome notification to new Google user ${user.email}`);
+//                 await notificationService.sendWelcomeNotification(user);
+//             } catch (notificationError) {
+//                 console.error(`[Auth Service - googleOAuthLogin] Non-critical error sending welcome notification for ${user.email}:`, notificationError);
+//             }
+//         }
+
+//         if (!user.kyc) { user.kyc = { status: 'not_started', rejectionReason: null }; }
+
+//         const userPayload = {
+//             _id: user._id.toString(), email: user.email, fullName: user.fullName, role: user.role,
+//             kyc: { status: user.kyc.status, rejectionReason: user.kyc.rejectionReason, },
+//             createdAt: user.createdAt.toISOString(), updatedAt: user.updatedAt.toISOString(),
+//             isGoogleAccount: user.isGoogleAccount
+//         };
+
+//         const token = jwt.sign(
+//             { userId: user._id, role: user.role },
+//             config.auth.jwtSecret,
+//             { expiresIn: config.auth.jwtExpiration }
+//         );
+
+//         console.log(`[Auth Service - googleOAuthLogin] Google login successful, token generated for ${email}. KYC Status: ${userPayload.kyc.status}, IsGoogle: ${userPayload.isGoogleAccount}`);
+//         return { user: userPayload, token };
+
+//     } catch (error) {
+//         console.error("[Auth Service - googleOAuthLogin] Error during Google OAuth process:", error);
+//         if (error.message.includes('Invalid Google ID token') || error.message.includes('email not verified') || error.message.includes('Account conflict')) {
+//              throw error;
+//         }
+//         if (error instanceof mongoose.Error.ValidationError) {
+//             throw new Error(`User data validation failed during Google Sign-In: ${error.message}`);
+//         }
+//          if (error instanceof mongoose.Error && error.message.includes('duplicate key error')) {
+//             console.warn("[Auth Service - googleOAuthLogin] Potential duplicate key error during Google user creation:", error.message);
+//             const payload = ticket?.getPayload();
+//             if (payload?.sub) {
+//                 try {
+//                     const existingUser = await User.findOne({ googleId: payload.sub }).select('+kyc +createdAt +updatedAt +isGoogleAccount');
+//                     if (existingUser) {
+//                          console.log("[Auth Service - googleOAuthLogin] Found user on retry after duplicate key error.");
+//                          if (!existingUser.kyc) { existingUser.kyc = { status: 'not_started', rejectionReason: null }; }
+//                          const userPayloadRetry = { // Renamed to avoid conflict
+//                              _id: existingUser._id.toString(), email: existingUser.email, fullName: existingUser.fullName, role: existingUser.role,
+//                              kyc: { status: existingUser.kyc.status, rejectionReason: existingUser.kyc.rejectionReason },
+//                              createdAt: existingUser.createdAt.toISOString(), updatedAt: existingUser.updatedAt.toISOString(),
+//                              isGoogleAccount: existingUser.isGoogleAccount
+//                          };
+//                          const tokenRetry = jwt.sign({ userId: existingUser._id, role: existingUser.role }, config.auth.jwtSecret, { expiresIn: config.auth.jwtExpiration }); // Renamed
+//                          return { user: userPayloadRetry, token: tokenRetry };
+//                     }
+//                 } catch (retryError) {
+//                     console.error("[Auth Service - googleOAuthLogin] Error during retry after duplicate key error:", retryError);
+//                 }
+//             }
+//              throw new Error('Failed to process Google Sign-In due to a conflict. Please try again.');
+//         }
+//         throw new Error('Google Sign-In failed. Please try again or use email/password.');
+//     }
+// };
+
+// export default {
+//     registerUser,
+//     loginUser,
+//     requestPasswordReset,
+//     resetPassword,
+//     googleOAuthLogin,
+// };
+
+
+
 import User from '../models/User.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -1850,108 +2211,161 @@ import { OAuth2Client } from 'google-auth-library';
 import notificationService from './notification.service.js';
 import emailService from '../utils/emailService.js';
 
-// --- Register User ---
+const OTP_EXPIRY_MINUTES = 5;
+
+const generateOtp = () => Math.floor(100000 + Math.random() * 900000).toString();
+
+const sendVerificationEmail = async (user, otp) => {
+    const appName = config.email.emailFromName || 'Remityn';
+    const templateData = {
+        userName: user.fullName,
+        otp: otp,
+        appName: appName,
+        expiryMinutes: OTP_EXPIRY_MINUTES,
+        currentYear: new Date().getFullYear().toString(),
+    };
+    const htmlContent = await emailService.renderTemplate('otpVerification', templateData);
+    await emailService.sendEmail({
+        to: user.email,
+        subject: `Your ${appName} Verification Code`,
+        html: htmlContent,
+        text: `Your verification code for ${appName} is ${otp}. It will expire in ${OTP_EXPIRY_MINUTES} minutes.`,
+    });
+    console.log(`[Auth Service] Verification OTP email sent to ${user.email}.`);
+};
+
 const registerUser = async (fullName, email, password) => {
-    console.log(`[Auth Service - registerUser] Attempting registration for email: ${email}`);
-    try {
-        // Select google flags during lookup
-        const existingUser = await User.findOne({ email }).select('+isGoogleAccount +googleId');
-        if (existingUser) {
-            console.log(`[Auth Service - registerUser] Registration failed: Email ${email} already exists.`);
-            if (existingUser.isGoogleAccount || existingUser.googleId) {
-                throw new Error('This email is associated with a Google account. Please log in with Google, or use "Forgot Password" to set/reset a password for email login.');
+    console.log(`[Auth Service] Attempting registration for email: ${email}`);
+    let user = await User.findOne({ email }).select('+isGoogleAccount +isVerified +verificationOtpExpires');
+
+    if (user) {
+        if (user.isVerified) {
+            console.log(`[Auth Service] Registration failed: Email ${email} already exists and is verified.`);
+            if (user.isGoogleAccount) {
+                 throw new Error('This email is associated with a Google account. Please log in with Google.');
             }
             throw new Error('Email already exists.');
         }
-
-        const newUser = new User({ fullName, email, password });
-        await newUser.save(); // Mongoose `isNew` is true before this, false after.
-        console.log(`[Auth Service - registerUser] User ${email} registered successfully with ID: ${newUser._id}.`);
-
-        // --- Send Welcome Notification ---
-        try {
-            console.log(`[Auth Service - registerUser] Attempting to send welcome notification to ${newUser.email}`);
-            await notificationService.sendWelcomeNotification(newUser); // Pass the Mongoose user document
-        } catch (notificationError) {
-            console.error(`[Auth Service - registerUser] Non-critical error sending welcome notification for ${newUser.email}:`, notificationError);
+        if (user.verificationOtpExpires && user.verificationOtpExpires > new Date()) {
+             console.log(`[Auth Service] Registration blocked: Active OTP exists for unverified user ${email}.`);
+             throw new Error(`An OTP has already been sent to ${email}. Please check your email or wait for it to expire.`);
         }
-        // --- End Send Welcome Notification ---
-
-        const userPayload = {
-            _id: newUser._id,
-            email: newUser.email,
-            fullName: newUser.fullName,
-            role: newUser.role,
-            kyc: { status: newUser.kyc?.status || 'not_started', rejectionReason: newUser.kyc?.rejectionReason || null, },
-            createdAt: newUser.createdAt,
-            updatedAt: newUser.updatedAt,
-            isGoogleAccount: newUser.isGoogleAccount
-        };
-        return userPayload;
-    } catch (error) {
-        console.error("[Auth Service - registerUser] Error during registration:", error.message);
-        if (error.message === 'Email already exists.' || error.message.includes('Google account')) {
-            throw error; // Re-throw specific errors
-        }
-        throw new Error('Registration failed. Please check your input and try again.');
+        console.log(`[Auth Service] Found existing unverified user for ${email}. Will overwrite with new details and send new OTP.`);
+        user.fullName = fullName;
+        user.password = password;
+        user.isGoogleAccount = false;
+    } else {
+        user = new User({ fullName, email, password });
     }
+
+    const otp = generateOtp();
+    user.verificationOtp = await bcrypt.hash(otp, 10);
+    user.verificationOtpExpires = new Date(Date.now() + OTP_EXPIRY_MINUTES * 60 * 1000);
+    user.isVerified = false;
+
+    await user.save();
+    console.log(`[Auth Service] User data saved for ${email}. IsNew: ${user.isNew}, ID: ${user._id}`);
+    
+    await sendVerificationEmail(user, otp);
+    
+    return { message: 'Registration successful. An OTP has been sent to your email.' };
 };
 
-// --- Login User ---
-const loginUser = async (email, password) => {
-    console.log(`[Auth Service - loginUser] Attempting login for email: ${email}`);
-    try {
-        const user = await User.findOne({ email })
-                               .select('+password +kyc +createdAt +updatedAt +isGoogleAccount +googleId');
+const verifyOtp = async (email, otp) => {
+    console.log(`[Auth Service] Attempting OTP verification for ${email}`);
+    const user = await User.findOne({ email }).select('+verificationOtp +verificationOtpExpires +isVerified');
 
-        if (!user) {
-            console.log(`[Auth Service - loginUser] User not found for email: ${email}`);
-            throw new Error('Invalid credentials');
-        }
+    if (!user) throw new Error('User not found.');
+    if (user.isVerified) return { message: 'Account is already verified.' };
 
-        console.log(`[Auth Service - loginUser] User found: ${user.email}`);
-
-        if (!user.password) {
-             console.log(`[Auth Service - loginUser] Password not set for user: ${email}. Likely a Google account without a password.`);
-             throw new Error('Invalid credentials');
-        }
-
-        console.log(`[Auth Service - loginUser] Comparing provided password with stored hash for ${email}...`);
-        const passwordMatch = await bcrypt.compare(password, user.password);
-        console.log(`[Auth Service - loginUser] bcrypt.compare result for ${email}: ${passwordMatch}`);
-
-        if (!passwordMatch) {
-            console.log(`[Auth Service - loginUser] Password comparison FAILED for ${email}`);
-            throw new Error('Invalid credentials');
-        }
-
-        console.log(`[Auth Service - loginUser] Password comparison SUCCEEDED for ${email}`);
-
-        if (!user.kyc) { user.kyc = { status: 'not_started', rejectionReason: null }; }
-
-        const userPayload = {
-            _id: user._id.toString(), email: user.email, fullName: user.fullName, role: user.role,
-            kyc: { status: user.kyc.status, rejectionReason: user.kyc.rejectionReason, },
-            createdAt: user.createdAt.toISOString(), updatedAt: user.updatedAt.toISOString(),
-            isGoogleAccount: user.isGoogleAccount
-         };
-
-        const token = jwt.sign(
-            { userId: user._id, role: user.role },
-            config.auth.jwtSecret,
-            { expiresIn: config.auth.jwtExpiration }
-        );
-
-        console.log(`[Auth Service - loginUser] Login successful, token generated for ${email}. KYC Status: ${userPayload.kyc.status}`);
-        return { user: userPayload, token };
-
-    } catch (error) {
-        console.error(`[Auth Service - loginUser] Error during login process for ${email}:`, error.message);
-        if (error.message === 'Invalid credentials' || error.message.includes('Authentication process failed')) {
-            throw error;
-        }
-        throw new Error('Login failed due to a server error.');
+    if (!user.verificationOtp || !user.verificationOtpExpires) {
+        throw new Error('No OTP found for this account. Please request a new one.');
     }
+    if (user.verificationOtpExpires < new Date()) {
+        throw new Error('OTP has expired. Please request a new one.');
+    }
+
+    const isMatch = await bcrypt.compare(otp, user.verificationOtp);
+    if (!isMatch) {
+        throw new Error('Invalid OTP.');
+    }
+
+    user.isVerified = true;
+    user.verificationOtp = undefined;
+    user.verificationOtpExpires = undefined;
+    await user.save();
+
+    console.log(`[Auth Service] User ${email} verified successfully.`);
+    try {
+        await notificationService.sendWelcomeNotification(user);
+    } catch (notificationError) {
+        console.error(`[Auth Service] Non-critical error sending welcome notification for ${user.email}:`, notificationError);
+    }
+
+    return { message: 'Email verified successfully. You can now log in.' };
+};
+
+
+const resendOtp = async (email) => {
+    console.log(`[Auth Service] Resending OTP for ${email}`);
+    const user = await User.findOne({ email }).select('+isVerified +verificationOtpExpires');
+    if (!user) throw new Error('User not found.');
+    if (user.isVerified) throw new Error('Account is already verified.');
+    if (user.verificationOtpExpires && user.verificationOtpExpires > new Date(Date.now() - 60 * 1000)) {
+        throw new Error('Please wait a minute before requesting another OTP.');
+    }
+
+    const otp = generateOtp();
+    user.verificationOtp = await bcrypt.hash(otp, 10);
+    user.verificationOtpExpires = new Date(Date.now() + OTP_EXPIRY_MINUTES * 60 * 1000);
+    await user.save();
+    await sendVerificationEmail(user, otp);
+    return { message: 'A new OTP has been sent to your email.' };
+};
+
+const loginUser = async (email, password) => {
+    console.log(`[Auth Service] Attempting login for email: ${email}`);
+    const user = await User.findOne({ email })
+                           .select('+password +isVerified +kyc +createdAt +updatedAt +isGoogleAccount');
+
+    if (!user) {
+        throw new Error('Invalid credentials');
+    }
+
+    if (!user.isVerified) {
+        console.log(`[Auth Service] Login failed for ${email}: Account not verified.`);
+        throw new Error('Account not verified. Please check your email for an OTP.');
+    }
+
+    if (!user.password) {
+         console.log(`[Auth Service - loginUser] Password not set for user: ${email}. Likely a Google account without a password.`);
+         throw new Error('Invalid credentials');
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
+        throw new Error('Invalid credentials');
+    }
+
+    console.log(`[Auth Service] Login successful for ${email}`);
+    
+    if (!user.kyc) { user.kyc = { status: 'not_started' }; }
+
+    const userPayload = {
+        _id: user._id.toString(), email: user.email, fullName: user.fullName, role: user.role,
+        isVerified: user.isVerified,
+        kyc: { status: user.kyc.status, rejectionReason: user.kyc.rejectionReason, },
+        createdAt: user.createdAt.toISOString(), updatedAt: user.updatedAt.toISOString(),
+        isGoogleAccount: user.isGoogleAccount
+     };
+
+    const token = jwt.sign(
+        { userId: user._id, role: user.role },
+        config.auth.jwtSecret,
+        { expiresIn: config.auth.jwtExpiration }
+    );
+
+    return { user: userPayload, token };
 };
 
 // --- Request Password Reset ---
@@ -2195,6 +2609,8 @@ const googleOAuthLogin = async (idToken) => {
 export default {
     registerUser,
     loginUser,
+    verifyOtp,
+    resendOtp,
     requestPasswordReset,
     resetPassword,
     googleOAuthLogin,
