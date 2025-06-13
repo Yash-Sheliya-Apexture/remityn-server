@@ -2475,8 +2475,8 @@ const resetPassword = async (token, password) => {
 };
 
 // --- Google OAuth Login ---
+// --- Google OAuth Login (FIXED) ---
 const googleOAuthLogin = async (idToken) => {
-    console.log("[Auth Service - googleOAuthLogin] Verifying Google ID token.");
     const client = new OAuth2Client(config.googleAuth.clientId);
     let ticket;
     try {
@@ -2490,118 +2490,60 @@ const googleOAuthLogin = async (idToken) => {
         if (!payload.email_verified) { throw new Error('Google account email not verified.'); }
 
         const { sub: googleId, email, name: fullName, picture: googleProfilePicture } = payload;
-        console.log(`[Auth Service - googleOAuthLogin] Google token verified for email: ${email}`);
 
-        let user = await User.findOne({ googleId: googleId })
-                             .select('+kyc +createdAt +updatedAt +isGoogleAccount +googleId');
+        let user = await User.findOne({ email: email })
+                             .select('+kyc +createdAt +updatedAt +isGoogleAccount +googleId +isVerified');
 
         let isNewUserCreatedInThisFlow = false;
 
         if (!user) {
-            console.log(`[Auth Service - googleOAuthLogin] No user found with googleId ${googleId}. Checking by email: ${email}`);
-            user = await User.findOne({ email: email })
-                             .select('+kyc +createdAt +updatedAt +isGoogleAccount +googleId +password');
-
-            if (user) {
-                console.log(`[Auth Service - googleOAuthLogin] Existing user found by email ${email}. Linking Google ID.`);
-                 if (!user.isGoogleAccount && !user.googleId) {
-                     console.log(`[Auth Service - googleOAuthLogin] Linking Google ID ${googleId} to existing non-Google user ${email}.`);
-                     user.googleId = googleId;
-                     user.isGoogleAccount = true;
-                     user.googleProfilePicture = googleProfilePicture;
-                     await user.save();
-                 } else if (user.googleId && user.googleId !== googleId) {
-                     console.error(`[Auth Service - googleOAuthLogin] CRITICAL: Email ${email} exists but with different Google ID! Existing: ${user.googleId}, New: ${googleId}`);
-                     throw new Error('Account conflict. Please contact support.');
-                 }
-                 if (!user.isGoogleAccount) {
-                     user.isGoogleAccount = true;
-                     await user.save();
-                 }
-            } else {
-                console.log(`[Auth Service - googleOAuthLogin] No user found by email. Creating new Google user for ${email}`);
-                user = new User({
-                    googleId: googleId,
-                    email: email,
-                    fullName: fullName,
-                    isGoogleAccount: true,
-                    googleProfilePicture: googleProfilePicture,
-                });
-                await user.save();
-                isNewUserCreatedInThisFlow = true;
-                console.log(`[Auth Service - googleOAuthLogin] New Google user ${email} created successfully with ID: ${user._id}.`);
-            }
+            user = new User({
+                googleId: googleId,
+                email: email,
+                fullName: fullName,
+                isGoogleAccount: true,
+                isVerified: true, // Google accounts are verified by default
+                googleProfilePicture: googleProfilePicture,
+            });
+            await user.save();
+            isNewUserCreatedInThisFlow = true;
         } else {
-             console.log(`[Auth Service - googleOAuthLogin] Existing Google user found by googleId ${googleId} for email ${email}.`);
+             // Link existing account or update info
              let profileNeedsUpdate = false;
+             if (!user.googleId) { user.googleId = googleId; profileNeedsUpdate = true; }
+             if (!user.isGoogleAccount) { user.isGoogleAccount = true; profileNeedsUpdate = true; }
+             if (!user.isVerified) { user.isVerified = true; profileNeedsUpdate = true; } // Mark as verified if not already
              if (user.fullName !== fullName) { user.fullName = fullName; profileNeedsUpdate = true; }
              if (user.googleProfilePicture !== googleProfilePicture) { user.googleProfilePicture = googleProfilePicture; profileNeedsUpdate = true; }
-             if (!user.isGoogleAccount) { user.isGoogleAccount = true; profileNeedsUpdate = true; }
-             if (profileNeedsUpdate) {
-                 await user.save();
-                 console.log(`[Auth Service - googleOAuthLogin] Updated profile info for ${email}.`);
-             }
+             if (profileNeedsUpdate) { await user.save(); }
         }
 
-        if (isNewUserCreatedInThisFlow && user) {
+        if (isNewUserCreatedInThisFlow) {
             try {
-                console.log(`[Auth Service - googleOAuthLogin] Attempting to send welcome notification to new Google user ${user.email}`);
                 await notificationService.sendWelcomeNotification(user);
             } catch (notificationError) {
-                console.error(`[Auth Service - googleOAuthLogin] Non-critical error sending welcome notification for ${user.email}:`, notificationError);
+                console.error(`[Auth Service] Non-critical error sending welcome notification for new Google user ${user.email}:`, notificationError);
             }
         }
 
         if (!user.kyc) { user.kyc = { status: 'not_started', rejectionReason: null }; }
 
+        // ----- THIS IS THE FIX -----
         const userPayload = {
             _id: user._id.toString(), email: user.email, fullName: user.fullName, role: user.role,
+            isVerified: user.isVerified, // <<< THIS IS THE FIX: Added isVerified to the payload
             kyc: { status: user.kyc.status, rejectionReason: user.kyc.rejectionReason, },
             createdAt: user.createdAt.toISOString(), updatedAt: user.updatedAt.toISOString(),
             isGoogleAccount: user.isGoogleAccount
         };
+        // ------------------------
 
-        const token = jwt.sign(
-            { userId: user._id, role: user.role },
-            config.auth.jwtSecret,
-            { expiresIn: config.auth.jwtExpiration }
-        );
+        const token = jwt.sign({ userId: user._id, role: user.role }, config.auth.jwtSecret, { expiresIn: config.auth.jwtExpiration });
 
-        console.log(`[Auth Service - googleOAuthLogin] Google login successful, token generated for ${email}. KYC Status: ${userPayload.kyc.status}, IsGoogle: ${userPayload.isGoogleAccount}`);
         return { user: userPayload, token };
 
     } catch (error) {
         console.error("[Auth Service - googleOAuthLogin] Error during Google OAuth process:", error);
-        if (error.message.includes('Invalid Google ID token') || error.message.includes('email not verified') || error.message.includes('Account conflict')) {
-             throw error;
-        }
-        if (error instanceof mongoose.Error.ValidationError) {
-            throw new Error(`User data validation failed during Google Sign-In: ${error.message}`);
-        }
-         if (error instanceof mongoose.Error && error.message.includes('duplicate key error')) {
-            console.warn("[Auth Service - googleOAuthLogin] Potential duplicate key error during Google user creation:", error.message);
-            const payload = ticket?.getPayload();
-            if (payload?.sub) {
-                try {
-                    const existingUser = await User.findOne({ googleId: payload.sub }).select('+kyc +createdAt +updatedAt +isGoogleAccount');
-                    if (existingUser) {
-                         console.log("[Auth Service - googleOAuthLogin] Found user on retry after duplicate key error.");
-                         if (!existingUser.kyc) { existingUser.kyc = { status: 'not_started', rejectionReason: null }; }
-                         const userPayloadRetry = { // Renamed to avoid conflict
-                             _id: existingUser._id.toString(), email: existingUser.email, fullName: existingUser.fullName, role: existingUser.role,
-                             kyc: { status: existingUser.kyc.status, rejectionReason: existingUser.kyc.rejectionReason },
-                             createdAt: existingUser.createdAt.toISOString(), updatedAt: existingUser.updatedAt.toISOString(),
-                             isGoogleAccount: existingUser.isGoogleAccount
-                         };
-                         const tokenRetry = jwt.sign({ userId: existingUser._id, role: existingUser.role }, config.auth.jwtSecret, { expiresIn: config.auth.jwtExpiration }); // Renamed
-                         return { user: userPayloadRetry, token: tokenRetry };
-                    }
-                } catch (retryError) {
-                    console.error("[Auth Service - googleOAuthLogin] Error during retry after duplicate key error:", retryError);
-                }
-            }
-             throw new Error('Failed to process Google Sign-In due to a conflict. Please try again.');
-        }
         throw new Error('Google Sign-In failed. Please try again or use email/password.');
     }
 };

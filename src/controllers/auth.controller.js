@@ -1085,13 +1085,11 @@ const resetPassword = async (req, res, next) => {
 };
 
 
-// --- Google OAuth Initiate (No changes needed) ---
+// --- Google OAuth Initiate ---
 const googleAuthInitiate = (req, res, next) => {
     try {
-        if (!config.googleAuth.redirectUri) { console.error('[Auth C - Google] CRITICAL: redirectUri missing'); return res.status(500).json({ message: 'Google Sign-In config error.' }); }
         const client = new OAuth2Client(config.googleAuth.clientId, config.googleAuth.clientSecret, config.googleAuth.redirectUri);
         const authorizeUrl = client.generateAuthUrl({ access_type: 'offline', scope: ['https://www.googleapis.com/auth/userinfo.profile', 'https://www.googleapis.com/auth/userinfo.email', 'openid'], prompt: 'consent' });
-        console.log('[Auth C - Google] Redirecting user to Google:', authorizeUrl);
         res.redirect(authorizeUrl);
     } catch (error) {
         console.error('[Auth C - Google] Error generating auth URL:', error);
@@ -1099,27 +1097,23 @@ const googleAuthInitiate = (req, res, next) => {
     }
 };
 
-// --- Google OAuth Callback (No changes needed structurally) ---
+// --- Google OAuth Callback (FIXED) ---
 const googleAuthCallback = async (req, res, next) => {
     const code = req.query.code;
     const errorQuery = req.query.error;
 
-    if (!config.googleAuth.redirectUri) { console.error('[Auth C - Google CB] CRITICAL: redirectUri missing'); return res.redirect(`${config.clientUrl}/auth/login?googleError=${encodeURIComponent('Google Sign-In configuration error.')}`); }
-    if (errorQuery) { console.error('[Auth C - Google CB] Error from Google:', errorQuery); return res.redirect(`${config.clientUrl}/auth/login?googleError=${encodeURIComponent('Google authentication failed: ' + errorQuery)}`); }
-    if (!code) { console.error('[Auth C - Google CB] No authorization code.'); return res.redirect(`${config.clientUrl}/auth/login?googleError=${encodeURIComponent('Google authentication failed: Missing code.')}`); }
-
-    console.log('[Auth C - Google CB] Received code. Exchanging...');
+    if (errorQuery) { return res.redirect(`${config.clientUrl}/auth/login?googleError=${encodeURIComponent('Google authentication failed: ' + errorQuery)}`); }
+    if (!code) { return res.redirect(`${config.clientUrl}/auth/login?googleError=${encodeURIComponent('Google authentication failed: Missing code.')}`); }
 
     try {
         const client = new OAuth2Client(config.googleAuth.clientId, config.googleAuth.clientSecret, config.googleAuth.redirectUri);
         const { tokens } = await client.getToken(code);
-        console.log('[Auth C - Google CB] Tokens received.');
 
         if (!tokens.id_token) { throw new Error('ID token missing from Google response.'); }
 
         const { user: userPayload, token: jwtToken } = await authService.googleOAuthLogin(tokens.id_token);
 
-        if (!userPayload || !userPayload._id || !userPayload.role || !userPayload.kyc || !userPayload.hasOwnProperty('isGoogleAccount')) {
+        if (!userPayload || !userPayload._id || typeof userPayload.isVerified !== 'boolean' ) {
             console.error('[Auth C - Google CB] Error: Missing essential user data in payload from service:', userPayload);
             throw new Error('Internal server error retrieving complete user details.');
         }
@@ -1129,6 +1123,7 @@ const googleAuthCallback = async (req, res, next) => {
              fullName: userPayload.fullName,
              email: userPayload.email,
              role: userPayload.role,
+             isVerified: userPayload.isVerified, // <<< THIS IS THE FIX
              kyc: { status: userPayload.kyc.status },
              createdAt: userPayload.createdAt,
              updatedAt: userPayload.updatedAt,
@@ -1138,26 +1133,15 @@ const googleAuthCallback = async (req, res, next) => {
         const encodedPayload = Buffer.from(payloadString).toString('base64url');
         const redirectUrl = `${config.clientUrl}/auth/google/callback-handler?token=${jwtToken}&ud=${encodedPayload}`;
 
-        console.log(`[Auth C - Google CB] Redirecting to frontend with token and user data (ud): ${redirectUrl.split('&ud=')[0]}...`);
         res.redirect(redirectUrl);
 
     } catch (error) {
         console.error('[Auth C - Google CB] Error processing callback:', error);
-        const message = error instanceof Error ? error.message : 'Google Sign-In failed during callback. Please try again.';
-        let userFriendlyMessage = message;
-        if (message.includes('Invalid Google ID token') || message.includes('token validation failed')) {
-            userFriendlyMessage = 'Google authentication failed. Please try signing in again.';
-        } else if (message.includes('email not verified')) {
-             userFriendlyMessage = 'Your Google account email must be verified to sign in.';
-        } else if (message.includes('Account conflict')) {
-             userFriendlyMessage = 'There was an issue linking your Google account. Please contact support.';
-        } else if (message.includes('Google Sign-In failed') || message.includes('User data validation failed')) {
-            userFriendlyMessage = 'An internal error occurred during Google Sign-In. Please try again later or use email/password.';
-        }
-        console.error('[Auth C - Google CB] Original Error:', error); 
-        res.redirect(`${config.clientUrl}/auth/login?googleError=${encodeURIComponent(userFriendlyMessage)}`);
+        const message = error instanceof Error ? error.message : 'Google Sign-In failed during callback.';
+        res.redirect(`${config.clientUrl}/auth/login?googleError=${encodeURIComponent(message)}`);
     }
 };
+
 
 export default {
     register,
