@@ -1,0 +1,64 @@
+backend/
+├── src/                (Source code)
+│   ├── server.js         (Main server entry point)
+│   ├── routes/           (API route definitions - grouped by feature/domain)
+│   │   ├── auth.routes.js     (Authentication routes - /api/auth)
+│   │   ├── user.routes.js     (User related routes - /api/users)
+│   │   ├── content.routes.js  (Content management routes - /api/content)
+│   │   ├── admin/         (Admin-specific routes - /api/admin/*)
+│   │   │   ├── user.admin.routes.js (Admin user management routes - /api/admin/users)
+│   │   │   ├── content.admin.routes.js (Admin content routes - /api/admin/content)
+│   │   │   └── ...
+│   │   ├── dashboard/     (Dashboard routes - /api/dashboard/*)
+│   │   │   ├── user.dashboard.routes.js (User dashboard routes - /api/dashboard/user)
+│   │   │   └── ...
+│   │   └── ...
+│   ├── controllers/      (Route handlers - logic for each endpoint)
+│   │   ├── auth.controller.js
+│   │   ├── user.controller.js
+│   │   ├── content.controller.js
+│   │   ├── admin/
+│   │   │   ├── user.admin.controller.js
+│   │   │   ├── content.admin.controller.js
+│   │   │   └── ...
+│   │   ├── dashboard/
+│   │   │   ├── user.dashboard.controller.js
+│   │   │   └── ...
+│   │   └── ...
+│   ├── services/         (Business logic layer - core application logic, independent of routes/controllers)
+│   │   ├── auth.service.js
+│   │   ├── user.service.js
+│   │   ├── content.service.js
+│   │   └── ...
+│   ├── models/           (Mongoose models - data schemas)
+│   │   ├── User.js
+│   │   ├── Content.js
+│   │   └── ...
+│   ├── middleware/       (Express middleware functions)
+│   │   ├── auth.middleware.js (Authentication middleware - JWT verification)
+│   │   ├── error.middleware.js (Error handling middleware)
+│   │   ├── validation.middleware.js (Input validation middleware)
+│   │   └── ...
+│   ├── utils/            (Utility functions, helpers - database connection, logging, etc.)
+│   │   ├── database.js    (MongoDB connection setup)
+│   │   ├── logger.js
+│   │   ├── helpers.js
+│   │   └── ...
+│   ├── config/           (Backend specific configuration - database config, JWT secrets)
+│   │   ├── index.js       (Loads all configurations)
+│   │   ├── database.config.js
+│   │   ├── auth.config.js
+│   │   └── ...
+│   ├── validators/       (Input validation schemas - using libraries like Joi, express-validator)
+│   │   ├── auth.validators.js
+│   │   ├── user.validators.js
+│   │   ├── content.validators.js
+│   │   └── ...
+│   ├── errors/           (Custom error classes - for better error handling)
+│   │   ├── ApiError.js
+│   │   ├── NotFoundError.js
+│   │   ├── BadRequestError.js
+│   │   └── ...
+│   └── ...
+├── package.json          (Backend dependencies and scripts)
+└── ...

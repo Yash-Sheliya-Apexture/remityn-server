@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KYC Action Required - {{appName}}</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <!-- The <style> block has been removed as all styles are now inlined -->
+  </head>
+  <body
+    style="
+      margin: 0;
+      padding: 0;
+      border: 0;
+      font-size: 100%;
+      vertical-align: baseline;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.6;
+      width: 100% !important;
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+      background-color: #f4f4f4;
+      color: #171717;
+    "
+  >
+    <table
+      role="presentation"
+      width="100%"
+      cellspacing="0"
+      cellpadding="0"
+      border="0"
+      style="
+        margin: 0;
+        border: 0;
+        font-size: 100%;
+        vertical-align: baseline;
+        box-sizing: border-box;
+        font-family: Arial, Helvetica, sans-serif;
+        line-height: 1.6;
+        width: 100%;
+        background-color: #f4f4f4;
+        margin: 24px 0px;
+      "
+    >
+      <tr>
+        <td
+          align="center"
+          style="
+            margin: 0;
+            padding: 0;
+            border: 0;
+            font-size: 100%;
+            vertical-align: baseline;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.6;
+          "
+        >
+          <div
+            style="
+              margin: 0 auto;
+              padding: 0;
+              border: 0;
+              font-size: 100%;
+              vertical-align: baseline;
+              box-sizing: border-box;
+              font-family: Arial, Helvetica, sans-serif;
+              line-height: 1.6;
+              max-width: 600px;
+              background-color: #fff;
+              border-radius: 20px;
+              overflow: hidden;
+              box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+            "
+          >
+            <!-- Header-Section -->
+            <div
+              style="
+                margin: 0;
+                padding: 30px 16px;
+                border: 0;
+                font-size: 100%;
+                vertical-align: baseline;
+                box-sizing: border-box;
+                font-family: Arial, Helvetica, sans-serif;
+                line-height: 1.6;
+                background-color: #002330;
+                text-align: center;
+                color: #fff;
+              "
+            >
+              <img
+                src="https://www.remityn.com/assets/images/dark_logo.png"
+                alt="{{appName}} Logo"
+                style="
+                  margin: 0;
+                  padding: 0;
+                  border: 0;
+                  font-size: 100%;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  line-height: 1.6;
+                  max-width: 180px;
+                  height: auto;
+                  display: block;
+                  margin-left: auto;
+                  margin-right: auto;
+                "
+              />
+
+              <h1
+                style="
+                  margin: 10px 0 0 0;
+                  padding: 0;
+                  border: 0;
+                  vertical-align: baseline;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  line-height: 1.6;
+                  font-size: 26px;
+                  font-weight: 700;
+                  letter-spacing: -0.5px;
+                  color: #fff;
+                "
+              >
+                KYC Information Required
+              </h1>
+            </div>
+
+            <!-- Email Body Content -->
+            <div
+              style="
+                margin: 0;
+                padding: 30px 16px;
+                border: 0;
+                font-size: 100%;
+                vertical-align: baseline;
+                box-sizing: border-box;
+                font-family: Arial, Helvetica, sans-serif;
+                line-height: 1.6;
+              "
+            >
+              <p
+                style="
+                  margin: 0;
+                  padding: 0;
+                  border: 0;
+                  vertical-align: baseline;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  font-size: 20px;
+                  font-weight: 700;
+                  margin-bottom: 15px;
+                  color: #171717;
+                  line-height: 1.6;
+                  text-transform: capitalize;
+                "
+              >
+                Hi {{userName}},
+              </p>
+
+              <p
+                style="
+                  margin: 0;
+                  padding: 0;
+                  border: 0;
+                  vertical-align: baseline;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  font-size: 16px;
+                  margin-bottom: 20px;
+                  color: #6a7282;
+                  line-height: 1.7;
+                "
+              >
+                We've reviewed your Know Your Customer (KYC) submission for your
+                <strong style="font-weight: 500; color: #171717"
+                  >{{appName}}</strong
+                >
+                account, and unfortunately, it has been
+                <strong style="color: #dc3545; font-weight: 600"
+                  >Rejected</strong
+                >.
+              </p>
+
+              {{#if rejectionReason}}
+              <div
+                style="
+                  padding: 15px 20px;
+                  border-width: 0 0 0 4px;
+                  border-style: solid;
+                  border-color: #dc3545;
+                  font-size: 15px;
+                  vertical-align: baseline;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  line-height: 1.6;
+                  background-color: #f8d7da;
+                  margin: 25px 0;
+                  color: #721c24;
+                  border-radius: 6px;
+                "
+              >
+                <p
+                  style="
+                    margin: 0 0 8px 0;
+                    padding: 0;
+                    border: 0;
+                    font-size: 100%; /* Inherits 15px from parent */
+                    vertical-align: baseline;
+                    box-sizing: border-box;
+                    font-family: Arial, Helvetica, sans-serif;
+                    line-height: 1.6;
+                    color: #721c24;
+                  "
+                >
+                  <strong
+                    style="color: #721c24; font-size: large; font-weight: 500"
+                    >Reason for rejection:</strong
+                  >
+                </p>
+
+                <p
+                  style="
+                    margin: 0;
+                    padding: 0;
+                    border: 0;
+                    font-size: 100%; /* Inherits 15px from parent */
+                    vertical-align: baseline;
+                    box-sizing: border-box;
+                    font-family: Arial, Helvetica, sans-serif;
+                    line-height: 1.6;
+                    color: #721c24;
+                  "
+                >
+                  {{rejectionReason}}
+                </p>
+              </div>
+              {{/if}}
+
+              <p
+                style="
+                  margin: 0;
+                  padding: 0;
+                  border: 0;
+                  vertical-align: baseline;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  font-size: 16px;
+                  margin-bottom: 20px;
+                  color: #6a7282;
+                  line-height: 1.7;
+                "
+              >
+                Please review the reason(s) provided and re-submit your KYC
+                information with the necessary corrections. You can update your
+                details through your account dashboard.
+              </p>
+
+              {{#if kycUpdateLink}}
+              <div
+                style="
+                  margin: 25px 0 35px 0;
+                  padding: 0;
+                  border: 0;
+                  font-size: 100%;
+                  vertical-align: baseline;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  line-height: 1.6;
+                  text-align: center;
+                "
+              >
+                <a
+                  href="{{kycUpdateLink}}"  
+                  style="
+                    margin: 0;
+                    padding: 12.5px 24px; 
+                    border: 0;
+                    vertical-align: b aseline;
+                    box-sizing: border-box;
+                    font-family: Arial, Helvetica, sans-serif;
+                    line-height: 1.6;
+                    display: inline-block;
+                    background-color: #adfa1d;
+                    color: #171717 !important;
+                    font-weight: 500;
+                    text-decoration: none;
+                    border-radius: 30px;
+                    font-size: 16px;
+                  "
+                  >Update Your KYC Information</a
+                >
+              </div>
+              {{/if}}
+
+              <p
+                style="
+                  margin: 0;
+                  padding: 0;
+                  border: 0;
+                  vertical-align: baseline;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  font-size: 16px;
+                  margin-bottom: 20px;
+                  color: #6a7282;
+                  line-height: 1.7;
+                "
+              >
+                If you have any questions or need assistance, please don't
+                hesitate to contact our support team.
+              </p>
+            </div>
+
+            <!-- Footer-Section -->
+            <div
+              style="
+                margin: 0;
+                padding: 30px 16px;
+                border: 0;
+                box-sizing: border-box;
+                font-family: Arial, Helvetica, sans-serif;
+                line-height: 1.6;
+                background-color: #002330;
+                color: #f4f4f4;
+                text-align: center;
+                font-size: 14px;
+              "
+            >
+              <div
+                style="
+                  margin: 0 0 20px 0;
+                  padding: 0;
+                  border: 0;
+                  vertical-align: baseline;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  line-height: 1.6;
+                  font-size: 20px;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  gap: 10px;
+                "
+              >
+                <!-- For social icons, using a table for better email client compatibility as flex is not well supported -->
+                <table
+                  role="presentation"
+                  border="0"
+                  cellpadding="0"
+                  cellspacing="0"
+                  style="margin: 0 auto; border-collapse: collapse"
+                >
+                  <tr>
+                    <td style="padding: 0 10px">
+                      <a
+                        href="https://x.com/home"
+                        title="Twitter"
+                        style="
+                          margin: 0;
+                          padding: 0;
+                          border: 0;
+                          font-size: 100%;
+                          vertical-align: baseline;
+                          box-sizing: border-box;
+                          font-family: Arial, Helvetica, sans-serif;
+                          line-height: 1.6;
+                          color: #adfa1d;
+                          text-decoration: none;
+                          font-weight: 400;
+                        "
+                      >
+                        <img
+                          src="https://www.remityn.com/assets/images/twitter.png"
+                          alt="twitter"
+                          style="width: 40px"
+                        />
+                      </a>
+                    </td>
+
+                    <td style="padding: 0 10px">
+                      <a
+                        href="https://www.linkedin.com/company/apextureprivatelimited/posts/?feedView=all"
+                        title="LinkedIn"
+                        style="
+                          margin: 0;
+                          padding: 0;
+                          border: 0;
+                          font-size: 100%;
+                          vertical-align: baseline;
+                          box-sizing: border-box;
+                          font-family: Arial, Helvetica, sans-serif;
+                          line-height: 1.6;
+                          color: #adfa1d;
+                          text-decoration: none;
+                          font-weight: 400;
+                        "
+                      >
+                        <img
+                          src="https://www.remityn.com/assets/images/LinkedIn.png"
+                          alt="LinkedIn"
+                          style="width: 40px"
+                        />
+                      </a>
+                    </td>
+                    <td style="padding: 0 10px">
+                      <a
+                        href="https://www.instagram.com/"
+                        title="Instagram"
+                        style="
+                          margin: 0;
+                          padding: 0;
+                          border: 0;
+                          font-size: 100%;
+                          vertical-align: baseline;
+                          box-sizing: border-box;
+                          font-family: Arial, Helvetica, sans-serif;
+                          line-height: 1.6;
+                          color: #adfa1d;
+                          text-decoration: none;
+                          font-weight: 400;
+                        "
+                      >
+                        <img
+                          src="https://www.remityn.com/assets/images/instagram.png"
+                          ;
+                          alt="instagram"
+                          style="width: 40px"
+                        />
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+
+              <p
+                style="
+                  border: 0;
+                  vertical-align: baseline;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  margin: 0 0 10px 0;
+                  padding: 0;
+                  line-height: 1.6;
+                  font-size: 16px;
+                  color: #f4f4f4;
+                "
+              >
+                Need help? Contact our support team at
+                <a
+                  href="mailto:support@{{appName}}.com"
+                  style="
+                    padding: 0;
+                    border: 0;
+                    font-size: 100%;
+                    vertical-align: baseline;
+                    box-sizing: border-box;
+                    font-family: Arial, Helvetica, sans-serif;
+                    line-height: 1.6;
+                    color: #adfa1d;
+                    text-decoration: none;
+                    font-weight: 400;
+                    margin: 0;
+                  "
+                  >support@{{appName}}.com</a
+                >
+              </p>
+
+              <div
+                style="
+                  margin: 0;
+                  padding: 0;
+                  border: 0;
+                  font-size: 100%;
+                  vertical-align: baseline;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  line-height: 1.6;
+                  font-size: 16px;
+                "
+              >
+                <a
+                  href="https://www.remityn.com/privacy-policy"
+                  style="
+                    padding: 0;
+                    border: 0;
+                    font-size: 100%;
+                    vertical-align: baseline;
+                    box-sizing: border-box;
+                    font-family: Arial, Helvetica, sans-serif;
+                    line-height: 1.6;
+                    color: #adfa1d;
+                    text-decoration: none;
+                    font-weight: 400;
+                    margin: 0;
+                  "
+                  >Privacy Policy</a
+                ><span
+                  style="
+                    margin: 0 10px;
+                    padding: 0;
+                    border: 0;
+                    font-size: 100%;
+                    vertical-align: baseline;
+                    box-sizing: border-box;
+                    font-family: Arial, Helvetica, sans-serif;
+                    line-height: 1.6;
+                    color: #adfa1d;
+                  "
+                  >|</span
+                >
+                <a
+                  href="https://www.remityn.com/terms-and-conditions"
+                  style="
+                    padding: 0;
+                    border: 0;
+                    font-size: 100%;
+                    vertical-align: baseline;
+                    box-sizing: border-box;
+                    font-family: Arial, Helvetica, sans-serif;
+                    line-height: 1.6;
+                    color: #adfa1d;
+                    text-decoration: none;
+                    font-weight: 400;
+                    margin: 0;
+                  "
+                  >Terms of Service</a
+                ><span
+                  style="
+                    margin: 0 10px;
+                    padding: 0;
+                    border: 0;
+                    font-size: 100%;
+                    vertical-align: baseline;
+                    box-sizing: border-box;
+                    font-family: Arial, Helvetica, sans-serif;
+                    line-height: 1.6;
+                    color: #adfa1d;
+                  "
+                  >|</span
+                >
+                <a
+                  href="https://www.remityn.com/faqs"
+                  style="
+                    padding: 0;
+                    border: 0;
+                    font-size: 100%;
+                    vertical-align: baseline;
+                    box-sizing: border-box;
+                    font-family: Arial, Helvetica, sans-serif;
+                    line-height: 1.6;
+                    color: #adfa1d;
+                    text-decoration: none;
+                    font-weight: 400;
+                    margin: 0;
+                  "
+                  >Help Center</a
+                >
+              </div>
+
+              <p
+                style="
+                  padding: 0;
+                  border: 0;
+                  vertical-align: baseline;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  line-height: 1.6;
+                  font-size: 16px;
+                  color: white;
+                  margin: 10px 0 0 0;
+                "
+              >
+                We appreciate your cooperation.
+              </p>
+
+              <p
+                style="
+                  padding: 0;
+                  border: 0;
+                  vertical-align: baseline;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  line-height: 1.6;
+                  font-size: 16px;
+                  color: white;
+                  margin: 5px 0 0 0;
+                "
+              >
+                <!-- Date Update -->
+                © {{currentYear}} {{appName}}. All rights reserved.
+              </p>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

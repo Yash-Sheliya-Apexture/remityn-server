@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome to {{appName}}!</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+    <style type="text/css">
+      /* Basic Reset (some parts might be duplicated by inline styles but kept for email client quirks) */
+      body,
+      table,
+      td,
+      div,
+      p,
+      a,
+      li,
+      h1,
+      h2,
+      h3,
+      h4,
+      span {
+        box-sizing: border-box;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      body {
+        width: 100% !important;
+        -webkit-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      img {
+        border: 0;
+        line-height: 100%;
+        outline: none;
+        text-decoration: none;
+        -ms-interpolation-mode: bicubic; /* For Outlook */
+      }
+      table,
+      td {
+        border-collapse: collapse; /* For Outlook */
+      }
+      /* Minimal styles that are hard to inline or good as global fallbacks for email clients */
+      a {
+        text-decoration: none;
+      }
+    </style>
+  </head>
+
+  <body
+    style="
+      margin: 0;
+      padding: 0;
+      border: 0;
+      font-size: 100%;
+      vertical-align: baseline;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.6;
+      width: 100% !important;
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+      background-color: #f4f4f4;
+      color: #171717;
+    "
+  >
+    <table
+      role="presentation"
+      width="100%"
+      cellspacing="0"
+      cellpadding="0"
+      border="0"
+      style="
+        margin: 0;
+        padding: 20px 0;
+        border: 0;
+        font-size: 100%;
+        vertical-align: baseline;
+        box-sizing: border-box;
+        font-family: Arial, Helvetica, sans-serif;
+        line-height: 1.6;
+        width: 100%;
+        background-color: #f4f4f4;
+        margin: 24px 0px ;
+      "
+    >
+      <tr>
+        <td
+          align="center"
+          style="
+            margin: 0;
+            padding: 0;
+            border: 0;
+            font-size: 100%;
+            vertical-align: baseline;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.6;
+          "
+        >
+          <div
+            style="
+              margin: 0 auto;
+              padding: 0;
+              border: 0;
+              font-size: 100%;
+              vertical-align: baseline;
+              box-sizing: border-box;
+              font-family: Arial, Helvetica, sans-serif;
+              line-height: 1.6;
+              max-width: 600px;
+              background-color: #fff;
+              border-radius: 20px;
+              overflow: hidden;
+            "
+          >
+            <!-- Header-Section -->
+            <div
+              style="
+                margin: 0;
+                padding: 30px 16px;
+                border: 0;
+                font-size: 100%;
+                vertical-align: baseline;
+                box-sizing: border-box;
+                font-family: Arial, Helvetica, sans-serif;
+                line-height: 1.6;
+                background-color: #002330;
+                text-align: center;
+                color: #fff;
+              "
+            >
+              <img
+                src="https://www.remityn.com/assets/images/dark_logo.png"
+                alt="{{appName}} Logo"
+                style="
+                  margin: 0;
+                  padding: 0;
+                  border: 0;
+                  font-size: 100%;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  line-height: 1.6;
+                  max-width: 180px;
+                  height: auto;
+                  display: block;
+                  margin-left: auto;
+                  margin-right: auto;
+                "
+              />
+
+              <h1
+                style="
+                  margin: 0;
+                  padding: 0;
+                  border: 0;
+                  vertical-align: baseline;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  line-height: 1.6;
+                  font-size: 28px;
+                  font-weight: 700;
+                  margin-top: 10px;
+                  letter-spacing: -0.5px;
+                  color: #fff;
+                  text-transform: capitalize;
+                "
+              >
+                Welcome to {{appName}}!
+                  
+              </h1>
+            </div>
+
+            <div
+              style="
+                margin: 0;
+                padding: 30px 16px;
+                border: 0;
+                font-size: 100%;
+                vertical-align: baseline;
+                box-sizing: border-box;
+                font-family: Arial, Helvetica, sans-serif;
+                line-height: 1.6;
+              "
+            >
+              <p
+                style="
+                  margin: 0;
+                  padding: 0;
+                  border: 0;
+                  vertical-align: baseline;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  font-size: 20px;
+                  font-weight: 700;
+                  margin-bottom: 15px;
+                  color: #171717;
+                  line-height: 1.6;
+                  text-transform: capitalize;
+                "
+              >
+                Hi {{userName}},
+              </p>
+
+              <p
+                style="
+                  margin: 0;
+                  padding: 0;
+                  border: 0;
+                  vertical-align: baseline;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  font-size: 16px;
+                  margin-bottom: 20px;
+                  color: #6a7282;
+                  line-height: 1.7;
+                "
+              >
+                Thank you for choosing
+                <strong
+                  style="
+                    margin: 0;
+                    padding: 0;
+                    border: 0;
+                    font-size: 100%;
+                    vertical-align: baseline;
+                    box-sizing: border-box;
+                    font-family: Arial, Helvetica, sans-serif;
+                    line-height: 1.7;
+                    font-weight: 500;
+                    color: #adfa1d;
+                  "
+                  >{{appName}}</strong
+                >! We're thrilled to have you join our platform. Get ready to
+                manage your international transactions with unparalleled ease
+                and top-tier security.
+              </p>
+
+              <div
+                style="
+                  margin: 0;
+                  padding: 25px 20px;
+                  border: 0;
+                  font-size: 100%;
+                  vertical-align: baseline;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  line-height: 1.6;
+                  background-color: #f4f4f4;
+                  border-radius: 10px;
+                  margin-bottom: 30px;
+                "
+              >
+                <h2
+                  style="
+                    margin: 0;
+                    padding: 0;
+                    border: 0;
+                    vertical-align: baseline;
+                    box-sizing: border-box;
+                    font-family: Arial, Helvetica, sans-serif;
+                    line-height: 1.6;
+                    font-size: 18px;
+                    font-weight: 500;
+                    color: #171717;
+                    margin-bottom: 15px;
+                    text-align: left;
+                  "
+                >
+                  Let's get you started:
+                </h2>
+                <ul
+                  style="
+                    margin: 0;
+                    border: 0;
+                    font-size: 100%;
+                    vertical-align: baseline;
+                    box-sizing: border-box;
+                    font-family: Arial, Helvetica, sans-serif;
+                    line-height: 1.6;
+                    list-style-type: none;
+                    padding-left: 0;
+                  "
+                >
+                  <li
+                    style="
+                      margin: 0;
+                      padding: 0;
+                      border: 0;
+                      vertical-align: baseline;
+                      box-sizing: border-box;
+                      font-family: Arial, Helvetica, sans-serif;
+                      font-size: 16px;
+                      color: #6a7282;
+                      margin-bottom: 15px;
+                      font-weight: 400;
+                      display: flex;
+                      text-align: left;
+                      line-height: 1.6;
+                    "
+                  >
+                    <span>1.</span>Complete your profile details and upload your
+                    KYC documents for verification.
+                  </li>
+
+                  <li
+                    style="
+                      margin: 0;
+                      padding: 0;
+                      border: 0;
+                      vertical-align: baseline;
+                      box-sizing: border-box;
+                      font-family: Arial, Helvetica, sans-serif;
+                      font-size: 16px;
+                      color: #6a7282;
+                      margin-bottom: 15px;
+                      font-weight: 400;
+                      display: flex;
+                      text-align: left;
+                      line-height: 1.6;
+                    "
+                  >
+                    <span
+                      >2.</span
+                    >Explore the dashboard to familiarize yourself with all our
+                    powerful features.
+                  </li>
+                  <li
+                    style="
+                      margin: 0;
+                      padding: 0;
+                      border: 0;
+                      vertical-align: baseline;
+                      box-sizing: border-box;
+                      font-family: Arial, Helvetica, sans-serif;
+                      font-size: 16px;
+                      color: #6a7282;
+                      margin-bottom: 15px;
+                      font-weight: 400;
+                      display: flex;
+                      text-align: left;
+                      line-height: 1.6;
+                    "
+                  >
+                    <span
+                      >3.</span
+                    >Set up your payment preferences and enhance your security
+                    settings.
+                  </li>
+                  <li
+                    style="
+                      margin: 0;
+                      padding: 0;
+                      border: 0;
+                      vertical-align: baseline;
+                      box-sizing: border-box;
+                      font-family: Arial, Helvetica, sans-serif;
+                      font-size: 16px;
+                      color: #6a7282;
+                      margin-bottom: 0px;
+                      font-weight: 400;
+                      display: flex;
+                      text-align: left;
+                      line-height: 1.6;
+                    "
+                  >
+                    <span
+                      >4.</span
+                    >Make your first international transaction smoothly and
+                    confidently.
+                  </li>
+                </ul>
+              </div>
+
+              <!-- For features-section, using tables for better email client compatibility as grid is not well supported -->
+              <table
+                role="presentation"
+                cellspacing="0"
+                cellpadding="0"
+                border="0"
+                width="100%"
+                style="
+                  margin: 0 0 35px 0;
+                  padding: 0;
+                  font-size: 100%;
+                  vertical-align: baseline;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  line-height: 1.6;
+                "
+              >
+                <tr>
+                  <td
+                    style="
+                      margin: 0;
+                      padding: 0 8px 16px 0;
+                      border: 0;
+                      font-size: 100%;
+                      vertical-align: top;
+                      box-sizing: border-box;
+                      font-family: Arial, Helvetica, sans-serif;
+                      line-height: 1.6;
+                      width: 50%;
+                    "
+                  >
+                    <div
+                      style="
+                        margin: 0;
+                        padding: 16px;
+                        border: 1px solid #e3e3e3;
+                        font-size: 100%;
+                        vertical-align: baseline;
+                        box-sizing: border-box;
+                        font-family: Arial, Helvetica, sans-serif;
+                        line-height: 1.6;
+                        background-color: #f4f4f4;
+                        border-radius: 10px;
+                        text-align: center;
+                        height: 100%;
+                      "
+                    >
+                      <img
+                        src="https://www.remityn.com/assets/images/security.png"
+                        alt="image1"
+                        style="width: 50px; margin-bottom: 10px"
+                      />
+
+                      <h3
+                        style="
+                          margin: 0 0 8px 0;
+                          padding: 0;
+                          border: 0;
+                          vertical-align: baseline;
+                          box-sizing: border-box;
+                          font-family: Arial, Helvetica, sans-serif;
+                          line-height: 1.6;
+                          font-size: 16px;
+                          font-weight: 500;
+                          color: #171717;
+                        "
+                      >
+                        Secure Transactions
+                      </h3>
+
+                      <p
+                        style="
+                          margin: 0;
+                          padding: 0;
+                          border: 0;
+                          vertical-align: baseline;
+                          box-sizing: border-box;
+                          font-family: Arial, Helvetica, sans-serif;
+                          line-height: 1.6;
+                          font-size: 14px;
+                          color: #6a7282;
+                        "
+                      >
+                        Enjoy bank-level security for all your financial
+                        activities, ensuring your money is always protected.
+                      </p>
+                    </div>
+                  </td>
+
+                  <td
+                    style="
+                      margin: 0;
+                      padding: 0 0 16px 8px;
+                      border: 0;
+                      font-size: 100%;
+                      vertical-align: top;
+                      box-sizing: border-box;
+                      font-family: Arial, Helvetica, sans-serif;
+                      line-height: 1.6;
+                      width: 50%;
+                    "
+                  >
+                    <div
+                      style="
+                        margin: 0;
+                        padding: 16px;
+                        border: 1px solid #e3e3e3;
+                        font-size: 100%;
+                        vertical-align: baseline;
+                        box-sizing: border-box;
+                        font-family: Arial, Helvetica, sans-serif;
+                        line-height: 1.6;
+                        background-color: #f4f4f4;
+                        border-radius: 10px;
+                        text-align: center;
+                        height: 100%;
+                      "
+                    >
+                      <img
+                        src="https://www.remityn.com/assets/images/globle.png"
+                        alt="image2"
+                        style="width: 50px; margin-bottom: 10px"
+                      />
+
+                      <h3
+                        style="
+                          margin: 0 0 8px 0;
+                          padding: 0;
+                          border: 0;
+                          vertical-align: baseline;
+                          box-sizing: border-box;
+                          font-family: Arial, Helvetica, sans-serif;
+                          line-height: 1.6;
+                          font-size: 16px;
+                          font-weight: 500;
+                          color: #171717;
+                        "
+                      >
+                        Global Coverage
+                      </h3>
+                      <p
+                        style="
+                          margin: 0;
+                          padding: 0;
+                          border: 0;
+                          vertical-align: baseline;
+                          box-sizing: border-box;
+                          font-family: Arial, Helvetica, sans-serif;
+                          line-height: 1.6;
+                          font-size: 14px;
+                          color: #6a7282;
+                        "
+                      >
+                        Send money to over 150 countries with speed and
+                        ease—wherever ones are, we’ve got you covered.
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    style="
+                      margin: 0;
+                      padding: 0 8px 0 0;
+                      border: 0;
+                      font-size: 100%;
+                      vertical-align: top;
+                      box-sizing: border-box;
+                      font-family: Arial, Helvetica, sans-serif;
+                      line-height: 1.6;
+                      width: 50%;
+                    "
+                  >
+                    <div
+                      style="
+                        margin: 0;
+                        padding: 16px;
+                        border: 1px solid #e3e3e3;
+                        font-size: 100%;
+                        vertical-align: baseline;
+                        box-sizing: border-box;
+                        font-family: Arial, Helvetica, sans-serif;
+                        line-height: 1.6;
+                        background-color: #f4f4f4;
+                        border-radius: 10px;
+                        text-align: center;
+                        height: 100%;
+                      "
+                    >
+                      <img
+                        src="https://www.remityn.com/assets/images/Competitive.png"
+                        alt="image3"
+                        style="width: 50px; margin-bottom: 10px"
+                      />
+
+                      <h3
+                        style="
+                          margin: 0 0 8px 0;
+                          padding: 0;
+                          border: 0;
+                          vertical-align: baseline;
+                          box-sizing: border-box;
+                          font-family: Arial, Helvetica, sans-serif;
+                          line-height: 1.6;
+                          font-size: 16px;
+                          font-weight: 500;
+                          color: #171717;
+                        "
+                      >
+                        Competitive Rates
+                      </h3>
+                      <p
+                        style="
+                          margin: 0;
+                          padding: 0;
+                          border: 0;
+                          vertical-align: baseline;
+                          box-sizing: border-box;
+                          font-family: Arial, Helvetica, sans-serif;
+                          line-height: 1.6;
+                          font-size: 14px;
+                          color: #6a7282;
+                        "
+                      >
+                        Benefit from transparent, low-fee pricing designed to
+                        give you more value for every transaction.
+                      </p>
+                    </div>
+                  </td>
+                  <td
+                    style="
+                      margin: 0;
+                      padding: 0 0 0 8px;
+                      border: 0;
+                      font-size: 100%;
+                      vertical-align: top;
+                      box-sizing: border-box;
+                      font-family: Arial, Helvetica, sans-serif;
+                      line-height: 1.6;
+                      width: 50%;
+                    "
+                  >
+                    <div
+                      style="
+                        margin: 0;
+                        padding: 16px;
+                        border: 1px solid #e3e3e3;
+                        font-size: 100%;
+                        vertical-align: baseline;
+                        box-sizing: border-box;
+                        font-family: Arial, Helvetica, sans-serif;
+                        line-height: 1.6;
+                        background-color: #f4f4f4;
+                        border-radius: 10px;
+                        text-align: center;
+                        height: 100%;
+                      "
+                    >
+                      <img
+                        src="https://www.remityn.com/assets/images/Mobile.png"
+                        alt="image4"
+                        style="width: 50px; margin-bottom: 10px"
+                      />
+
+                      <h3
+                        style="
+                          margin: 0 0 8px 0;
+                          padding: 0;
+                          border: 0;
+                          vertical-align: baseline;
+                          box-sizing: border-box;
+                          font-family: Arial, Helvetica, sans-serif;
+                          line-height: 1.6;
+                          font-size: 16px;
+                          font-weight: 500;
+                          color: #171717;
+                        "
+                      >
+                        Mobile Access
+                      </h3>
+                      <p
+                        style="
+                          margin: 0;
+                          padding: 0;
+                          border: 0;
+                          vertical-align: baseline;
+                          box-sizing: border-box;
+                          font-family: Arial, Helvetica, sans-serif;
+                          line-height: 1.6;
+                          font-size: 14px;
+                          color: #6a7282;
+                        "
+                      >
+                        Transfer funds on the go. Our platform gives you full
+                        control anytime, from any device.
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+
+              {{#if loginLink}}
+              <div
+                style="
+                  margin: 10px 0 35px 0;
+                  padding: 0;
+                  border: 0;
+                  font-size: 100%;
+                  vertical-align: baseline;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  line-height: 1.6;
+                  text-align: center;
+                "
+              >
+                <a
+                  href="{{loginLink}}"
+                  style="
+                    margin: 0;
+                    padding: 12.5px 24px;
+                    border: 0;
+                    vertical-align: baseline;
+                    box-sizing: border-box;
+                    font-family: Arial, Helvetica, sans-serif;
+                    line-height: 1.6;
+                    display: inline-block;
+                    background-color: #adfa1d;
+                    color: #171717 !important;
+                    font-weight: 500;
+                    text-decoration: none;
+                    border-radius: 30px;
+                  "
+                  >Access Your Dashboard</a
+                >
+              </div>
+              {{/if}}
+
+              <p
+                style="
+                  margin: 0;
+                  padding: 0;
+                  border: 0;
+                  vertical-align: baseline;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  font-size: 16px;
+                  margin-bottom: 20px;
+                  color: #6a7282;
+                  line-height: 1.7;
+                "
+              >
+                If you have any questions or need assistance, our dedicated
+                support team is available 24/7 to help you. We're here for you
+                every step of the way!
+              </p>
+            </div>
+
+
+
+            <!-- Footer-Section -->
+            <div
+              style="
+                margin: 0;
+                padding: 30px 16px;
+                border: 0;
+                box-sizing: border-box;
+                font-family: Arial, Helvetica, sans-serif;
+                line-height: 1.6;
+                background-color: #002330;
+                color: #f4f4f4;
+                text-align: center;
+                font-size: 14px;
+              "
+            >
+              <div
+                style="
+                  margin: 0 0 20px 0;
+                  padding: 0;
+                  border: 0;
+                  vertical-align: baseline;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  line-height: 1.6;
+                  font-size: 20px;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  gap: 10px;
+                "
+              >
+                <!-- For social icons, using a table for better email client compatibility as flex is not well supported -->
+                <table
+                  role="presentation"
+                  border="0"
+                  cellpadding="0"
+                  cellspacing="0"
+                  style="margin: 0 auto; border-collapse: collapse"
+                >
+                  <tr>
+                    <td style="padding: 0 10px">
+                      <a
+                        href="https://x.com/home"
+                        title="Twitter"
+                        style="
+                          margin: 0;
+                          padding: 0;
+                          border: 0;
+                          font-size: 100%;
+                          vertical-align: baseline;
+                          box-sizing: border-box;
+                          font-family: Arial, Helvetica, sans-serif;
+                          line-height: 1.6;
+                          color: #adfa1d;
+                          text-decoration: none;
+                          font-weight: 400;
+                        "
+                      >
+                        <img
+                          src="https://www.remityn.com/assets/images/twitter.png"
+                          alt="twitter"
+                          style="width: 40px"
+                        />
+                      </a>
+                    </td>
+
+                    <td style="padding: 0 10px">
+                      <a
+                        href="https://www.linkedin.com/company/apextureprivatelimited/posts/?feedView=all"
+                        title="LinkedIn"
+                        style="
+                          margin: 0;
+                          padding: 0;
+                          border: 0;
+                          font-size: 100%;
+                          vertical-align: baseline;
+                          box-sizing: border-box;
+                          font-family: Arial, Helvetica, sans-serif;
+                          line-height: 1.6;
+                          color: #adfa1d;
+                          text-decoration: none;
+                          font-weight: 400;
+                        "
+                      >
+                        <img
+                          src="https://www.remityn.com/assets/images/LinkedIn.png"
+                          alt="LinkedIn"
+                          style="width: 40px"
+                        />
+                      </a>
+                    </td>
+                    <td style="padding: 0 10px">
+                      <a
+                        href="https://www.instagram.com/"
+                        title="Instagram"
+                        style="
+                          margin: 0;
+                          padding: 0;
+                          border: 0;
+                          font-size: 100%;
+                          vertical-align: baseline;
+                          box-sizing: border-box;
+                          font-family: Arial, Helvetica, sans-serif;
+                          line-height: 1.6;
+                          color: #adfa1d;
+                          text-decoration: none;
+                          font-weight: 400;
+                        "
+                      >
+                        <img
+                          src="https://www.remityn.com/assets/images/instagram.png";
+                          alt="instagram"
+                          style="width: 40px"
+                        />
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              
+              <p
+                style="
+                  border: 0;
+                  vertical-align: baseline;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  margin: 0 0 10px 0;
+                  padding: 0;
+                  line-height: 1.6;
+                  font-size: 16px;
+                  color: #f4f4f4;
+                "
+              >
+                Need help? Contact our support team at
+                <a
+                  href="mailto:support@{{appName}}.com"
+                  style="
+                    padding: 0;
+                    border: 0;
+                    font-size: 100%;
+                    vertical-align: baseline;
+                    box-sizing: border-box;
+                    font-family: Arial, Helvetica, sans-serif;
+                    line-height: 1.6;
+                    color: #adfa1d;
+                    text-decoration: none;
+                    font-weight: 400;
+                    margin: 0;
+                  "
+                  >support@{{appName}}.com</a
+                >
+              </p>
+
+              <div
+                style="
+                  margin: 0;
+                  padding: 0;
+                  border: 0;
+                  font-size: 100%;
+                  vertical-align: baseline;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  line-height: 1.6;
+                  font-size: 16px;
+                "
+              >
+                <a
+                  href="https://www.remityn.com/privacy-policy"
+                  style="
+                    padding: 0;
+                    border: 0;
+                    font-size: 100%;
+                    vertical-align: baseline;
+                    box-sizing: border-box;
+                    font-family: Arial, Helvetica, sans-serif;
+                    line-height: 1.6;
+                    color: #adfa1d;
+                    text-decoration: none;
+                    font-weight: 400;
+                    margin: 0;
+                  "
+                  >Privacy Policy</a
+                ><span
+                  style="
+                    margin: 0 10px;
+                    padding: 0;
+                    border: 0;
+                    font-size: 100%;
+                    vertical-align: baseline;
+                    box-sizing: border-box;
+                    font-family: Arial, Helvetica, sans-serif;
+                    line-height: 1.6;
+                    color: #adfa1d;
+                  "
+                  >|</span
+                >
+                <a
+                  href="https://www.remityn.com/terms-and-conditions"
+                  style="
+                    padding: 0;
+                    border: 0;
+                    font-size: 100%;
+                    vertical-align: baseline;
+                    box-sizing: border-box;
+                    font-family: Arial, Helvetica, sans-serif;
+                    line-height: 1.6;
+                    color: #adfa1d;
+                    text-decoration: none;
+                    font-weight: 400;
+                    margin: 0;
+                  "
+                  >Terms of Service</a
+                ><span
+                  style="
+                    margin: 0 10px;
+                    padding: 0;
+                    border: 0;
+                    font-size: 100%;
+                    vertical-align: baseline;
+                    box-sizing: border-box;
+                    font-family: Arial, Helvetica, sans-serif;
+                    line-height: 1.6;
+                    color: #adfa1d;
+                  "
+                  >|</span
+                >
+                <a
+                  href="https://www.remityn.com/faqs"
+                  style="
+                    padding: 0;
+                    border: 0;
+                    font-size: 100%;
+                    vertical-align: baseline;
+                    box-sizing: border-box;
+                    font-family: Arial, Helvetica, sans-serif;
+                    line-height: 1.6;
+                    color: #adfa1d;
+                    text-decoration: none;
+                    font-weight: 400;
+                    margin: 0;
+                  "
+                  >Help Center</a
+                >
+              </div>
+
+              <p
+                style="
+                  padding: 0;
+                  border: 0;
+                  vertical-align: baseline;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  line-height: 1.6;
+                  font-size: 16px;
+                  color: white;
+                  margin: 10px 0 0 0;
+                "
+              >
+                © {{currentYear}} {{appName}}. All rights reserved.
+              </p>
+
+              <p
+                style="
+                  padding: 0;
+                  border: 0;
+                  vertical-align: baseline;
+                  box-sizing: border-box;
+                  font-family: Arial, Helvetica, sans-serif;
+                  line-height: 1.6;
+                  font-size: 16x;
+                  color: white;
+                  margin: 5px 0 0 0;
+                "
+              >
+                If you did not sign up for this account, please disregard this
+                email.
+              </p>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
