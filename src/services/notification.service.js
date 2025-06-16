@@ -124,7 +124,7 @@ async function sendWelcomeNotification(user) {
         console.error('[NotificationService] Invalid user object for welcome notification. Required: _id, email, fullName.', user);
         return;
     }
-    const appName = config.email.emailFromName || 'Wise App Clone';
+    const appName = config.email.emailFromName || 'Remityn';
     const clientLoginUrl = `${config.clientUrl}/auth/login`;
 
     const inboxSubject = `🎉 Welcome to ${appName}, ${user.fullName}!`;
