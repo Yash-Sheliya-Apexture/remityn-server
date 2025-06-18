@@ -405,51 +405,210 @@
 // export default scrapeAllRatesAgainstINR;
 
 
-// backend/src/utils/scrapeAllRatesAgainstINR.js
+// // backend/src/utils/scrapeAllRatesAgainstINR.js
+// import { chromium } from 'playwright';
+
+// const GOOGLE_FINANCE_BASE_URL = 'https://www.google.com/finance/quote/';
+// const RATE_SELECTOR = 'div[data-last-price]';
+// // **KEY CHANGE**: Set a limit for how many pages to scrape at once.
+// // 2 or 3 is a safe and effective number for most servers and to avoid IP blocks.
+// const CONCURRENCY_LIMIT = 2;
+
+// /**
+//  * Scrapes the rate for a single currency pair against INR.
+//  * This function is designed to be run in parallel.
+//  * @param {string} code - The currency code (e.g., 'USD').
+//  * @param {import('playwright').BrowserContext} context - The Playwright browser context to use.
+//  * @returns {Promise<{code: string, rate: number}|{code: string, error: string}>}
+//  */
+// async function scrapeSingleRate(code, context) {
+//     const url = `${GOOGLE_FINANCE_BASE_URL}${code}-INR`;
+//     let page;
+//     try {
+//         page = await context.newPage();
+//         await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
+
+//         const rateLocator = page.locator(RATE_SELECTOR).first();
+//         await rateLocator.waitFor({ state: 'visible', timeout: 45000 });
+
+//         const rateText = await rateLocator.getAttribute('data-last-price');
+//         if (!rateText) throw new Error(`Attribute 'data-last-price' not found`);
+
+//         const rate = parseFloat(rateText.replace(/,/g, ''));
+//         if (isNaN(rate)) throw new Error(`Parsed value "${rateText}" is not a number`);
+
+//         // Log success only for clarity, not for every run.
+//         // console.log(`Scraper: SUCCESS for ${code}/INR -> ${rate}`);
+//         return { code, rate };
+
+//     } catch (error) {
+//         console.error(`Scraper: FAILED for ${code}/INR: ${error.message}`);
+//         return { code, error: error.message };
+//     } finally {
+//         if (page && !page.isClosed()) {
+//             await page.close();
+//         }
+//     }
+// }
+
+// /**
+//  * Main scraper function that launches a browser and runs currency scrapes in controlled parallel batches.
+//  * @param {string[]} targetCurrencyCodes - Array of currency codes to scrape.
+//  * @returns {Promise<Object|null>} - An object of scraped rates or null on critical failure.
+//  */
+// async function scrapeAllRatesAgainstINR(targetCurrencyCodes) {
+//     if (!targetCurrencyCodes || targetCurrencyCodes.length === 0) {
+//         console.log('Scraper: No target currency codes provided.');
+//         return {};
+//     }
+
+//     let browser;
+//     const allResults = [];
+
+//     console.log(`Scraper: Starting batched scrape for ${targetCurrencyCodes.length} currencies (Concurrency: ${CONCURRENCY_LIMIT})...`);
+//     try {
+//         browser = await chromium.launch({
+//             headless: true,
+//             args: [
+//                 '--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage',
+//                 '--disable-accelerated-2d-canvas', '--no-first-run', '--no-zygote',
+//                 '--disable-gpu', '--disable-extensions'
+//             ]
+//         });
+
+//         const context = await browser.newContext({
+//              userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36',
+//              ignoreHTTPSErrors: true
+//         });
+
+//         // **KEY CHANGE**: Process the currencies in batches.
+//         for (let i = 0; i < targetCurrencyCodes.length; i += CONCURRENCY_LIMIT) {
+//             const batch = targetCurrencyCodes.slice(i, i + CONCURRENCY_LIMIT);
+//             console.log(`Scraper: Processing batch ${i / CONCURRENCY_LIMIT + 1}: [${batch.join(', ')}]`);
+
+//             const batchPromises = batch.map(code => scrapeSingleRate(code, context));
+//             const batchResult = await Promise.allSettled(batchPromises);
+//             allResults.push(...batchResult);
+
+//             // Optional: Add a small delay between batches to be even more "polite"
+//             if (i + CONCURRENCY_LIMIT < targetCurrencyCodes.length) {
+//                 await new Promise(resolve => setTimeout(resolve, 1000)); // 1-second delay
+//             }
+//         }
+
+//     } catch (browserError) {
+//         console.error('Scraper: Major error during browser setup or batch execution:', browserError);
+//         return null;
+//     } finally {
+//         if (browser && browser.isConnected()) {
+//             console.log('Scraper: Closing Playwright browser.');
+//             await browser.close();
+//         }
+//     }
+
+//     // Process the results collected from all batches
+//     const scrapedRates = {};
+//     const failedScrapes = [];
+//     allResults.forEach(result => {
+//         if (result.status === 'fulfilled' && result.value) {
+//             const { code, rate, error } = result.value;
+//             if (error) {
+//                 failedScrapes.push(code);
+//             } else {
+//                 scrapedRates[code] = rate;
+//             }
+//         } else if (result.status === 'rejected') {
+//             // This case should be rare since scrapeSingleRate catches its own errors
+//             console.error(`Scraper: A promise was unexpectedly rejected:`, result.reason);
+//         }
+//     });
+
+//     if (Object.keys(scrapedRates).length === 0 && targetCurrencyCodes.length > 0) {
+//         console.error('Scraper: Critical failure - no rates were successfully scraped.');
+//         return null;
+//     }
+
+//     if (failedScrapes.length > 0) {
+//         console.warn('Scraper: Failed to scrape rates for:', failedScrapes.join(', '));
+//     }
+
+//     console.log(`Scraper: Finished batched scrape. Success: ${Object.keys(scrapedRates).length}, Failed: ${failedScrapes.length}`);
+//     return scrapedRates;
+// }
+
+// export default scrapeAllRatesAgainstINR;
+
+
 import { chromium } from 'playwright';
 
 const GOOGLE_FINANCE_BASE_URL = 'https://www.google.com/finance/quote/';
 const RATE_SELECTOR = 'div[data-last-price]';
-// **KEY CHANGE**: Set a limit for how many pages to scrape at once.
-// 2 or 3 is a safe and effective number for most servers and to avoid IP blocks.
 const CONCURRENCY_LIMIT = 2;
+// **IMPROVEMENT 1: Added retry logic for individual scrapes**
+const MAX_RETRIES = 2; // Each currency will be tried up to 3 times (1 initial + 2 retries)
 
 /**
- * Scrapes the rate for a single currency pair against INR.
- * This function is designed to be run in parallel.
+ * Scrapes the rate for a single currency pair against INR with retry logic.
  * @param {string} code - The currency code (e.g., 'USD').
- * @param {import('playwright').BrowserContext} context - The Playwright browser context to use.
+ * @param {import('playwright').BrowserContext} context - The Playwright browser context.
  * @returns {Promise<{code: string, rate: number}|{code: string, error: string}>}
  */
 async function scrapeSingleRate(code, context) {
     const url = `${GOOGLE_FINANCE_BASE_URL}${code}-INR`;
     let page;
-    try {
-        page = await context.newPage();
-        await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
 
-        const rateLocator = page.locator(RATE_SELECTOR).first();
-        await rateLocator.waitFor({ state: 'visible', timeout: 45000 });
+    // **IMPROVEMENT 1 (continued): Retry loop**
+    for (let attempt = 1; attempt <= MAX_RETRIES + 1; attempt++) {
+        try {
+            page = await context.newPage();
 
-        const rateText = await rateLocator.getAttribute('data-last-price');
-        if (!rateText) throw new Error(`Attribute 'data-last-price' not found`);
+            // **IMPROVEMENT 2: Use 'networkidle' for more reliable waiting on dynamic pages**
+            // and increased overall timeout for the navigation.
+            await page.goto(url, { waitUntil: 'networkidle', timeout: 60000 });
 
-        const rate = parseFloat(rateText.replace(/,/g, ''));
-        if (isNaN(rate)) throw new Error(`Parsed value "${rateText}" is not a number`);
+            // **IMPROVEMENT 3: Handle cookie/consent pop-ups that can block the view.**
+            // This looks for common button texts and clicks them if found. It has a short timeout
+            // so it doesn't slow things down if the pop-up isn't there.
+            const consentButton = page.locator(
+                'button:has-text("Reject all"), button:has-text("Accept all"), button:has-text("I agree")'
+            ).first();
+            try {
+                await consentButton.click({ timeout: 5000 });
+                console.log(`Scraper: Handled consent pop-up for ${code}/INR.`);
+            } catch (e) {
+                // This is expected if no pop-up appears. Do nothing.
+            }
 
-        // Log success only for clarity, not for every run.
-        // console.log(`Scraper: SUCCESS for ${code}/INR -> ${rate}`);
-        return { code, rate };
+            const rateLocator = page.locator(RATE_SELECTOR).first();
+            // **IMPROVEMENT 4: Increased timeout for finding the element to match the page load timeout.**
+            await rateLocator.waitFor({ state: 'visible', timeout: 60000 });
 
-    } catch (error) {
-        console.error(`Scraper: FAILED for ${code}/INR: ${error.message}`);
-        return { code, error: error.message };
-    } finally {
-        if (page && !page.isClosed()) {
+            const rateText = await rateLocator.getAttribute('data-last-price');
+            if (!rateText) throw new Error(`Attribute 'data-last-price' not found`);
+
+            const rate = parseFloat(rateText.replace(/,/g, ''));
+            if (isNaN(rate)) throw new Error(`Parsed value "${rateText}" is not a number`);
+
+            // Success! Close the page and return the result.
             await page.close();
+            return { code, rate };
+
+        } catch (error) {
+            console.error(`Scraper: FAILED for ${code}/INR (Attempt ${attempt}/${MAX_RETRIES + 1}): ${error.message.split('\n')[0]}`);
+            if (page && !page.isClosed()) {
+                await page.close();
+            }
+
+            if (attempt > MAX_RETRIES) {
+                // If this was the last attempt, return the error
+                return { code, error: error.message };
+            }
+            // Wait for a short period before retrying
+            await new Promise(resolve => setTimeout(resolve, 2000 * attempt)); // wait 2s, 4s
         }
     }
 }
+
 
 /**
  * Main scraper function that launches a browser and runs currency scrapes in controlled parallel batches.
@@ -476,23 +635,23 @@ async function scrapeAllRatesAgainstINR(targetCurrencyCodes) {
             ]
         });
 
+        // Set a realistic user-agent and viewport to better mimic a real browser
         const context = await browser.newContext({
-             userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36',
-             ignoreHTTPSErrors: true
+             userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
+             ignoreHTTPSErrors: true,
+             viewport: { width: 1280, height: 800 }
         });
 
-        // **KEY CHANGE**: Process the currencies in batches.
         for (let i = 0; i < targetCurrencyCodes.length; i += CONCURRENCY_LIMIT) {
             const batch = targetCurrencyCodes.slice(i, i + CONCURRENCY_LIMIT);
             console.log(`Scraper: Processing batch ${i / CONCURRENCY_LIMIT + 1}: [${batch.join(', ')}]`);
 
             const batchPromises = batch.map(code => scrapeSingleRate(code, context));
-            const batchResult = await Promise.allSettled(batchPromises);
+            const batchResult = await Promise.all(batchPromises); // Using Promise.all as scrapeSingleRate now always resolves
             allResults.push(...batchResult);
 
-            // Optional: Add a small delay between batches to be even more "polite"
             if (i + CONCURRENCY_LIMIT < targetCurrencyCodes.length) {
-                await new Promise(resolve => setTimeout(resolve, 1000)); // 1-second delay
+                await new Promise(resolve => setTimeout(resolve, 1000));
             }
         }
 
@@ -506,30 +665,27 @@ async function scrapeAllRatesAgainstINR(targetCurrencyCodes) {
         }
     }
 
-    // Process the results collected from all batches
+    // Process the results
     const scrapedRates = {};
     const failedScrapes = [];
     allResults.forEach(result => {
-        if (result.status === 'fulfilled' && result.value) {
-            const { code, rate, error } = result.value;
+        if (result) {
+            const { code, rate, error } = result;
             if (error) {
                 failedScrapes.push(code);
             } else {
                 scrapedRates[code] = rate;
             }
-        } else if (result.status === 'rejected') {
-            // This case should be rare since scrapeSingleRate catches its own errors
-            console.error(`Scraper: A promise was unexpectedly rejected:`, result.reason);
         }
     });
 
     if (Object.keys(scrapedRates).length === 0 && targetCurrencyCodes.length > 0) {
-        console.error('Scraper: Critical failure - no rates were successfully scraped.');
+        console.error('Scraper: Critical failure - no rates were successfully scraped after all retries.');
         return null;
     }
 
     if (failedScrapes.length > 0) {
-        console.warn('Scraper: Failed to scrape rates for:', failedScrapes.join(', '));
+        console.warn('Scraper: Permanently failed to scrape rates for:', failedScrapes.join(', '));
     }
 
     console.log(`Scraper: Finished batched scrape. Success: ${Object.keys(scrapedRates).length}, Failed: ${failedScrapes.length}`);
@@ -537,7 +693,6 @@ async function scrapeAllRatesAgainstINR(targetCurrencyCodes) {
 }
 
 export default scrapeAllRatesAgainstINR;
-
 
 // // backend/src/utils/scrapeAllRatesAgainstINR.js
 // import { chromium } from 'playwright';
